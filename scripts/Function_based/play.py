@@ -47,6 +47,14 @@ import torch
 from datetime import datetime
 import random
 
+from RL_Algorithm.Function_based.DQN import DQN
+
+from RL_Algorithm.Function_based.Linear_Q import Linear_QN
+
+from RL_Algorithm.Function_based.MC_REINFORCE import MC_REINFORCE
+
+from RL_Algorithm.Function_based.AC import Actor_Critic
+
 import matplotlib
 import matplotlib.pyplot as plt
 from collections import namedtuple, deque
@@ -100,15 +108,18 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     # ========================= Can be modified ========================== #
 
     # hyperparameters
-    num_of_action = None
-    action_range = [None, None]  
-    learning_rate = None
+    num_of_action = 7
+    action_range = [-15, 15]  
+
+    learning_rate = 0.3
+
     hidden_dim = None
-    n_episodes = None
-    initial_epsilon = None
-    epsilon_decay = None  
-    final_epsilon = None
-    discount = None
+    n_episodes = 10000
+    initial_epsilon = 1.0
+    epsilon_decay = 0.9997  
+    final_epsilon = 0.01
+    discount = 0.5
+
     buffer_size = None
     batch_size = None
 

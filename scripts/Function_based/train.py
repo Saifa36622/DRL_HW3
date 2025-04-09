@@ -179,7 +179,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     with open(config_path, 'w') as f:
         json.dump(config, f, indent=4)  # FIX: Use indentation for readability
 
-    wandb.init(project="DRL_HW2_Final",name=name_plot)
+    wandb.init(project="Test_HW_3",name=name_plot)
 
     # simulate environment
     while simulation_app.is_running():

@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 
 Transition = namedtuple('Transition',
-                        ('state', 'action', 'next_state', 'reward'))
+                        ('state', 'action', 'next_state', 'reward','done'))
 
 # if GPU is to be used
 device = torch.device(
@@ -40,6 +40,7 @@ class ReplayBuffer:
             next_state (Tensor): The next state resulting from the action.
             done (bool): Whether the episode has terminated.
         """
+        self.memory.append(Transition(state, action, next_state, reward,done))
 
     def sample(self):
         """
@@ -52,6 +53,19 @@ class ReplayBuffer:
             - next_state_batch: Batch of next states.
             - done_batch: Batch of terminal state flags.
         """
+
+        transitions = random.sample(self.memory, k=self.batch_size)
+        batch = Transition(*zip(*transitions))
+
+        # Convert to tensors (assuming all inputs are already torch.Tensor)
+        state_batch      = torch.cat(batch.state)
+        action_batch     = torch.cat(batch.action)
+        reward_batch     = torch.cat(batch.reward)
+        next_state_batch = torch.cat(batch.next_state)
+        done_batch       = torch.tensor([0.0 if d else 1.0 for d in batch.next_state is not None], dtype=torch.float32)
+
+        return state_batch, action_batch, reward_batch, next_state_batch, done_batch
+
 
     def __len__(self):
         """
@@ -111,13 +125,19 @@ class BaseAlgorithm():
 
     def q(self, obs, a=None):
         """Returns the linearly-estimated Q-value for a given state and action."""
+        # a as in action
         # ========= put your code here ========= #
-        if a==None:
-            # Get q values from all action in state
-            pass
+
+        policy_tensor = obs["policy"]  # e.g., a torch CUDA tensor
+        x = policy_tensor.cpu().numpy().flatten()
+
+        
+        if a is None:
+            # Return Q-values for all actions
+            return np.dot(x, self.w)
         else:
-            # Get q values given action & state
-            pass
+            # Return Q-value for a specific action
+            return np.dot(x, self.w[:, a])
         # ====================================== #
         
     
@@ -133,7 +153,24 @@ class BaseAlgorithm():
             torch.Tensor: Scaled action tensor.
         """
         # ========= put your code here ========= #
-        pass
+
+        # action_min, action_max = self.action_range
+        # num_bins = self.num_of_action - 1
+        # scaled = action_min + (action / num_bins) * (action_max - action_min)
+
+        # return torch.tensor([[scaled]], dtype=torch.float32, device=device)
+
+        min_action, max_action = self.action_range 
+        num_bins = self.num_of_action - 1 
+
+        continuous_action = min_action + (action / num_bins) * (max_action - min_action)
+
+        if isinstance(action, torch.Tensor):
+            device = action.device  
+        else:
+            device = "cuda" if torch.cuda.is_available() else "cpu"  # Default to CUDA if available
+
+        return torch.tensor([[continuous_action]], dtype=torch.float32, device=device)
         # ====================================== #
     
     def decay_epsilon(self):
@@ -141,7 +178,7 @@ class BaseAlgorithm():
         Decay epsilon value to reduce exploration over time.
         """
         # ========= put your code here ========= #
-        pass
+        self.epsilon = max(self.final_epsilon, self.epsilon * self.epsilon_decay)
         # ====================================== #
 
     def save_w(self, path, filename):
@@ -149,15 +186,26 @@ class BaseAlgorithm():
         Save weight parameters.
         """
         # ========= put your code here ========= #
-        pass
+
+        w_list = self.w.tolist()
+        with open(os.path.join(path, filename), 'w') as f:
+            json.dump(w_list, f)
+
+        # np.save(f"{path}/w.npy", self.w)
+
         # ====================================== #
+
             
     def load_w(self, path, filename):
         """
         Load weight parameters.
         """
         # ========= put your code here ========= #
-        pass
+        # self.w = np.load("saved_models/w.npy")
+        
+        with open(os.path.join(path, filename), 'r') as f:
+            w_list = json.load(f)
+            self.w = np.array(w_list)
         # ====================================== #
 
 
