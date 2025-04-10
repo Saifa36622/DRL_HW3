@@ -93,8 +93,10 @@ $target$ = $r + γ ⋅ maxQ(s′,a′)$ <br>
 
 &emsp;where : 
 <br>
-    &emsp;&emsp;&emsp;$γ$ = Discount Factor <br>
-    &emsp;&emsp;&emsp;$Q(s′,a′)$ = The predicted Q-value from the next state 𝑠′ ,across all possible actions 𝑎′ ( max -> Best possible action in next state )
+    &emsp;&emsp;&emsp; 
+    $γ$  = Discount Factor <br>
+    &emsp;&emsp;&emsp; 
+    $Q(s′,a′)$ = The predicted Q-value from the next state 𝑠′ ,across all possible actions 𝑎′ ( max -> Best possible &emsp;&emsp;&emsp;action in next state )
 
 
 $prediction$ = $Q(s,a)$ or Q-value from the this state
