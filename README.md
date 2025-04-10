@@ -27,7 +27,7 @@ $$Q(s,a) = f(s,a) · w_a $$
 
 Where: 
 
-- **$f(s,a)$** is feature vector $f(s,a)$ each function extracts the value of a feature for state-action pair , the size of this matrix will depend on  nunmber of action * observation space
+- **$f(s,a)$** is feature vector each function extracts the value of a feature for state-action pair , the size of this matrix will depend on  nunmber of action * observation space
 
 <p align="center">
   <img src="image/image7.png" alt="alt text">
