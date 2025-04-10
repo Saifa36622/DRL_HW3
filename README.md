@@ -18,7 +18,11 @@ and the value will be size of number of action ,So we can visualize it like this
 
 the table size will increase directly by size of <ins>observation space</ins> * <ins>action space</ins>
 
+<br>
 
+**but**
+
+<br>
 linear q learning will approaximate Q(s,a) using Linear function
 
 $$Q(s,a) = obs · w_a $$
