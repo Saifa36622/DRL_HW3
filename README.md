@@ -21,7 +21,8 @@ and the value will be size of number of action ,So we can visualize it like this
 **but**
 
 <br>
-linear q learning will approaximate Q(s,a) using Linear function
+
+linear q learning will approaximate Q(s,a) using Linear function <br>
 
 $$Q(s,a) = f(s,a) · w_a $$
 
