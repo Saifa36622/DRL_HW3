@@ -73,7 +73,7 @@ then the output the Q-value will be Vector size 1 x 5 → 5 Q-value → each for
   <img src="image/image6.png" alt="alt text">
 </p>
 
-To update the weights (update rule) on inti all weights will be 0 then update the weight according to 
+To update the weights (update rule) on inti all weights will be 0 then update the weight in every step according to 
 
 <p align="center">
   <img src="image/image10.png" alt="alt text">
@@ -110,4 +110,10 @@ So we can write the update rule in full form as this
 <p align="center">
   <img src="image/image11.png" alt="alt text">
 </p>
+
+then the rest of the algorithm is the same with q-learning by using the selected policy (in this project will be epsilon greedy) to selected the optimal action
+
+
+### Deep Q learning (DQN)
+
 
