@@ -73,7 +73,7 @@ then the output the Q-value will be Vector size 1 x 5 → 5 Q-value → each for
   <img src="image/image6.png" alt="alt text">
 </p>
 
-To update the weights (update rule) on all weights will be 0 then update the weight according to 
+To update the weights (update rule) on inti all weights will be 0 then update the weight according to 
 
 <p align="center">
   <img src="image/image10.png" alt="alt text">
@@ -91,10 +91,10 @@ where :
 
 $target$ = $r + γ ⋅ maxQ(s′,a′)$ <br>
 
-where : 
+&emsp;where : 
 <br>
-    $γ$ = Discount Factor <br>
-    $Q(s′,a′)$ = The predicted Q-value from the next state 𝑠′ ,across all possible actions 𝑎′ ( max -> Best possible action in next state )
+    &emsp;&emsp;&emsp;$γ$ = Discount Factor <br>
+    &emsp;&emsp;&emsp;$Q(s′,a′)$ = The predicted Q-value from the next state 𝑠′ ,across all possible actions 𝑎′ ( max -> Best possible action in next state )
 
 
 $prediction$ = $Q(s,a)$ or Q-value from the this state
