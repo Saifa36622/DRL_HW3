@@ -49,7 +49,7 @@ such as if I have number of action = 5 and 4 observation term the $w_a$ will rep
 </p>
 
 
-then when the Calculate Q-value for all action from the eqation
+then when the Calculate Q-value for all action from the equation
 
 <p align="center">
   <img src="image/image8.png" alt="alt text">
