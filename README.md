@@ -61,7 +61,7 @@ or we can write it in this form
   <img src="image/image4.png" alt="alt text">
 </p>
 
-the n the out put the Q-value will be Vector size 1 x 5 → 5 Q-value → each for action 5 action 
+then the output the Q-value will be Vector size 1 x 5 → 5 Q-value → each for action 5 action 
 
 <p align="center">
   <img src="image/image5.png" alt="alt text">
