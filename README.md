@@ -1,167 +1,47 @@
-# CartPole
- 
-## Overview
-This repository contains files related to the `CartPole` task, which will be used for Homework 2 and Homework 3. It includes environment configurations, RL algorithms, and training scripts to support reinforcement learning experiments.
+# **Cartpole**
+
+## **Review algorithm**
+
+### Linear Q learning
+
+Linear Q-Learning is a type of Q-Learning where instead of using a table to store the Q-values, we use a linear function (a weighted sum of features) to approximate the Q-values
+
+So instead of keeping the q table like this 
+
+$$Q(s,a) = value$$
+
+and the value will be size of number of action ,So we can visualize it like this 
+
+![alt text](image/image.png)
+
+the table size will increase directly by size of <ins>observation space</ins> * <ins>action space</ins>
 
 
-The repository provided in this homework is a custom IsaacLab extension, created from [IsaacLabExtensionTemplate](https://github.com/isaac-sim/IsaacLabExtensionTemplate). Please refer to this repository for more detailed information.
+linear q learning will approaximate Q(s,a) using Linear function
 
-## Installation
+$$Q(s,a) = obs · w_a $$
 
-- navigate to the `CartPole_4.5.0/` directory by running:
+Where: 
 
-    ```
-    cd CartPole_4.5.0/
-    ```
-- Using a python interpreter (conda) that has Isaac Lab installed, install the library
+$obs$ is observation space -> in this cart pole problem there wil be 4 obs term that is [cart_pos, pole_angle, cart_vel, pole_vel] 
 
-    ```
-    python -m pip install -e ./source/CartPole
-    ```
+![alt text](image/image3.png)
 
-- Verify that the extension is correctly installed by running the following command to print all the available environments in the extension:
+$w_a$ is weight matrix for each action on each state 
 
-    ```
-    python scripts/list_envs.py
-    ```
-## Repository organization
-This repository is an IsaacLab extension for training reinforcement learning (RL) agents on the CartPole task. It includes environment configurations, RL algorithms, and training scripts.
+such as if I have number of action = 5 and 4 observation term the $w_a$ will represent the weight of each action on each state
 
-```
-CARTPOLE
-├── source/CartPole
-│   ├── CartPole
-│       ├── tasks
-│           ├── cartpole
-│               ├── agents
-│               ├── mdp
-│               │   ├── __init__.py
-│               │   ├── actions.py
-│               │   ├── events.py
-│               │   ├── observation.py
-│               │   ├── rewards.py
-│               │   └── terminations.py
-│               ├── __init__.py
-│               ├── stabilize_cartpole_env_cfg.py
-│               └── swing_up_cartpole_env_cfg.py
-│               
-│  
-├── q_value
-│   ├── Stabilize
-│   │   ├── tasks
-│   │   ├── MC
-│   │   ├── Q_Learning
-│   │   └── SARSA
-│   └── SwingUp
-│  
-├── RL_Algorithm
-│   ├── Table_based             # Homework 2
-│   │   ├── Double_Q_Learning.py
-│   │   ├── MC.py
-│   │   ├── Q_Learning.py
-│   │   └── SARSA.py
-│   │   
-│   ├── Function_based          # Homework 3
-│   │   ├── DQN.py
-│   │   ├── Linear_Q.py
-│   │   └── MC_REINFORCE.py
-│   │   
-│   ├── RL_base.py              # Homework 2
-│   └── RL_base_function.py     # Homework 3
-│
-└── scripts
-    └── RL_Algorithm
-        ├── play.py
-        ├── random_action.py
-        └── train.py
-```
-
-### Descriptions
-
-- **source/CartPole:** Contains the core elements of the CartPole environments.
-
-    - **mdp:** Implements key components of the Markov Decision Process (MDP) which includes actions, events, observations, rewards, and termination conditions.
-
-    - **__init__.py:** Contains the gym registry
-    code that registers your environments with the `OpenAI Gym interface`. This registration makes your environments compatible with standard RL libraries and algorithms (please consults this [tutorial](https://isaac-sim.github.io/IsaacLab/main/source/tutorials/03_envs/register_rl_env_gym.html#using-the-gym-registry) for more information).
-
-    - **stabilize_cartpole_env_cfg.py / swing_up_cartpole_env_cfg.py:** `Manager-Based RL Environments` configuration for the stabilization task and swing-up task:
-
-        - `Scene`
-
-        - `Action` 
-
-        - `Observation`
-
-        - `Event`
-
-        - `Reward`
-
-        - `Termination`
-
-- **q_value:** Stores the trained `Q-value tables` as `JSON files`. Each subdirectory corresponds to a different `Q-value tables` learned by algorithms.
-
-- **RL_Algorithm:** This is where you'll implement your reinforcement learning algorithms for Homeworks:
-
-    - **Table_based:** Contains separate implementations for each table-based RL approach that has to be modified for **Homework 2**:
-
-        - `Double Q-Learning`
-        
-        - `MC` (Monte-Carlo)
-
-        - `Q-Learning`
-
-        - `SARSA` 
-
-    - **Function_based:** Contains separate implementations for each function approximation-based RL approach that has to be modified for **Homework 3**:
-
-        - `AC`  (Actor-Critic)
-        
-        - `DQN`  (Deep Q-Network)
-
-        - `Linear_Q` (Linear Q-Learning)
-
-        - `MC_REINFORCE`
-
-    - **RL_base.py:** Provides the foundation classes with common methods for table-based RL approaches that has to be modified for **Homework 2** such as:
-
-        - `get_action`
-
-        - `decay_epsilon` 
-
-        - `save_model`
-
-        - `load_model`
-        
-        Please refer to this file for more details on these functions.
-
-    - **RL_base_function.py:** Provides the foundation classes with common methods such for function approximation-based RL approaches that has to be modified for **Homework 3** such as:
-
-        - `get_action`
-
-        - `decay_epsilon` 
-
-        In **Homework 3**, you need to write functions to save and load model by yourself.
+![alt text](image/image2.png)
 
 
-- **scripts/RL_Algorithm:** Contains executable scripts for:
+then when the Calculate Q-value for all action
 
-    - **train.py:** Runs the training process for your selected algorithm against a specific environment.
+![alt text](image/image4.png)
 
-    - **play.py:** Demonstrates the performance of a trained agent using saved Q-values.
- 
-    - **random_action.py:** Executes random actions in the environment to verify package installation.
+the Q-value will be = Vector size 1 x 5 → 5 Q-value → each for action 5 action 
 
-## Verifying CartPole installation
+![alt text](image/image5.png)
 
-### 1. Stabilizing Cart-Pole Task
+(if u want to Q-value of specific action a only ,we can use dot product between obs and W column of action a)
 
-```
-python scripts/RL_Algorithm/random_action.py --task Stabilize-Isaac-Cartpole-v0
-```
-
-### 2. Swing-up Cart-Pole Task
-
-```
-python scripts/RL_Algorithm/random_action.py --task SwingUp-Isaac-Cartpole-v0
-```
+![alt text](image/image6.png)

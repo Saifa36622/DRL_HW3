@@ -191,31 +191,35 @@ class DQN(BaseAlgorithm):
 
         Returns:
             Tuple: A tuple containing:
-                - non_final_mask (Tensor): A boolean mask indicating which states are non-final.
-                - non_final_next_states (Tensor): The next states that are not terminal.
-                - state_batch (Tensor): The batch of current states.
-                - action_batch (Tensor): The batch of actions taken.
-                - reward_batch (Tensor): The batch of rewards received.
+                - non_final_mask (Tensor)
+                - non_final_next_states (Tensor)
+                - state_batch (Tensor)
+                - action_batch (Tensor)
+                - reward_batch (Tensor)
         """
-        # Ensure there are enough samples in memory before proceeding
-        # ========= put your code here ========= #
-        # Sample a batch from memory
-        batch = self.memory.sample()
+        
         if len(self.memory) < batch_size:
             return None
-        
-        # The replay buffer returns a tuple of (state_batch, action_batch, reward_batch, next_state_batch, done_batch)
-        state_batch, action_batch, reward_batch, next_state_batch, done_batch = self.memory.sample()
 
-        # Convert done to a mask: 1 for non-final, 0 for final
-        # done_batch: [batch_size], with 1.0 if done else 0.0
-        # We want non_final_mask to be True where not done => (done == 0.0)
+        
+        batch = self.memory.sample()
+
+        # Unpack directly
+        state_batch, action_batch, reward_batch, next_state_batch, done_batch = batch
+
+        # done == 1.0 → terminal
+        # done == 0.0 → non-terminal
         non_final_mask = (done_batch == 0.0)
 
-        # Then gather only those states that are not done
+        
+
+        # Only get next_states that are non-terminal
         non_final_next_states = next_state_batch[non_final_mask]
 
+        action_batch = action_batch.unsqueeze(1)
+        
         return non_final_mask, non_final_next_states, state_batch, action_batch, reward_batch
+
         # ====================================== #
 
     def update_policy(self):
@@ -337,52 +341,52 @@ class DQN(BaseAlgorithm):
         
         # ---------------------------------------------------------------------------------------------------------------
         state, _info = env.reset()
-        # Convert state to tensor
-        state = torch.tensor(state["policy"], dtype=torch.float32, device=self.device)
+        state = torch.as_tensor(state["policy"], dtype=torch.float32, device=self.device)  # clean convert
+
         episode_return = 0.0
         done = False
         timestep = 0
 
         while not done:
-            # 2a) select action
+            # 1. Select Action
             action_idx = self.select_action(state)
-            
-            # 2b) step environment
-            # For discrete control tasks, we pass action_idx directly
-            next_obs, reward, terminated, truncated, info = env.step(action_idx)
-            
-            done = terminated or truncated
-            next_state = torch.tensor(next_obs["policy"], dtype=torch.float32, device=self.device)
-            reward_tensor = torch.tensor([reward], dtype=torch.float32, device=self.device)
-            action_tensor = torch.tensor([[action_idx]], dtype=torch.int64, device=self.device)
-            
-            # 2c) store transition in memory
-            # done_batch is typically float(1.0 if done else 0.0)
-            done_float = 1.0 if done else 0.0
-            done_tensor = torch.tensor([done_float], dtype=torch.float32, device=self.device)
 
-            # If you prefer a standard approach:
-            # memory stores (state, action, reward, next_state, done)
+            # convert to Tensor (Isaac wants Tensor, even for discrete action)
+            action_tensor = torch.tensor([[action_idx]], dtype=torch.float32, device=self.device)
+
+            # 2. Step env
+            next_obs, reward, terminated, truncated, info = env.step(action_tensor)
+
+            done = terminated or truncated
+            next_state = torch.as_tensor(next_obs["policy"], dtype=torch.float32, device=self.device)
+
+            reward_tensor = torch.tensor([reward], dtype=torch.float32, device=self.device)
+            action_tensor_long = torch.tensor([[action_idx]], dtype=torch.int64, device=self.device)  # for loss.gather()
+
+            done_tensor = torch.tensor([1.0 if done else 0.0], dtype=torch.float32, device=self.device)
+
+            # 3. Save to Replay Buffer
             self.memory.add(
-                state.unsqueeze(0),      # shape [1, state_dim]
-                action_tensor,           # shape [1, 1]
-                reward_tensor.unsqueeze(0),  # shape [1, 1]
-                next_state.unsqueeze(0), # shape [1, state_dim]
-                done_tensor
+                state.unsqueeze(0),           # [1, state_dim]
+                action_tensor_long,           # [1, 1]
+                reward_tensor.unsqueeze(0),   # [1, 1]
+                next_state.unsqueeze(0),      # [1, state_dim]
+                done_tensor                   # [1]
             )
 
-            state = next_state  # move on
+            # 4. Move on
+            state = next_state
             episode_return += reward
             timestep += 1
-            
-            # 2d) training step(s)
-            self.update_policy()          # update policy net
-            self.update_target_networks() # soft update target net
-            
+
+            # 5. Update Policy and Target Network
+            self.update_policy()
+            self.update_target_networks()
+
             if done:
-                # log or plot
                 self.plot_durations(timestep)
                 break
+
 
 
 

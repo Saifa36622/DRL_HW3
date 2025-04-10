@@ -62,7 +62,8 @@ class ReplayBuffer:
         action_batch     = torch.cat(batch.action)
         reward_batch     = torch.cat(batch.reward)
         next_state_batch = torch.cat(batch.next_state)
-        done_batch       = torch.tensor([0.0 if d else 1.0 for d in batch.next_state is not None], dtype=torch.float32)
+        # done_batch       = torch.tensor([0.0 if d else 1.0 for d in batch.next_state is not None], dtype=torch.float32)
+        done_batch       = torch.cat(batch.done)
 
         return state_batch, action_batch, reward_batch, next_state_batch, done_batch
 

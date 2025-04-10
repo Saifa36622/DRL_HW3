@@ -108,15 +108,15 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     learning_rate = 0.3
 
-    hidden_dim = None
+    hidden_dim = 64
     n_episodes = 10000
     initial_epsilon = 1.0
     epsilon_decay = 0.9997  
     final_epsilon = 0.01
     discount = 0.5
 
-    buffer_size = None
-    batch_size = None
+    buffer_size = 10000
+    batch_size = 64
 
 
     # set up matplotlib
@@ -153,12 +153,26 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         batch_size = batch_size,
     )
 
+    # agent = Linear_QN(
+    #     # device=device,
+    #     num_of_action=num_of_action,
+    #     action_range=action_range,
+    #     learning_rate=learning_rate,
+    #     # hidden_dim=hidden_dim,
+    #     initial_epsilon = initial_epsilon,
+    #     epsilon_decay = epsilon_decay,
+    #     final_epsilon = final_epsilon,
+    #     discount_factor = discount,
+    #     # buffer_size = buffer_size,
+    #     # batch_size = batch_size,
+    # )
+    max_steps = 1000
     # reset environment
     obs, _ = env.reset()
     timestep = 0
 
     train_logs = []
-    name_plot = ""
+    name_plot = "testing"
 
     full_path = os.path.join(f"{task_name}", Algorithm_name,name_plot)
     os.makedirs(full_path, exist_ok=True)
@@ -187,7 +201,12 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         # with torch.inference_mode():
         
         for episode in tqdm(range(n_episodes)):
+
+            # DQN
             agent.learn(env)
+
+            # LQN
+            # agent.learn(env,max_steps)
 
         if episode % 100 == 0:
             print(agent.epsilon)
@@ -204,7 +223,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
             agent.save_w(full_path, w_file)
         
         print('Complete')
-        agent.plot_durations(show_result=True)
+        # agent.plot_durations(show_result=True)
         plt.ioff()
         plt.show()
             

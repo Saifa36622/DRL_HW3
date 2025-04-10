@@ -41,7 +41,7 @@ class Linear_QN(BaseAlgorithm):
         action: int,
         reward: float,
         next_obs,
-        next_action: int,
+        # next_action: int,
         terminated: bool
     ):
         """
@@ -58,7 +58,31 @@ class Linear_QN(BaseAlgorithm):
 
         """
         # ========= put your code here ========= #
-        pass
+        x_s = obs["policy"].cpu().numpy().flatten()
+
+        # Compute the current Q(s,a)
+        current_q = np.dot(x_s, self.w[:, action])
+
+        # For Q-learning, we use max over actions in the next state
+        # If the episode is terminated, there's no bootstrap from next state
+        if terminated:
+            # No future Q if episode ended
+            best_next_q = 0.0
+        else:
+            # Flatten next state
+            x_s_next = next_obs["policy"].cpu().numpy().flatten()
+            # Q(s',a') for all possible a'
+            q_next_all = np.dot(x_s_next, self.w)  # shape: (num_of_actions,)
+            best_next_q = np.max(q_next_all)
+
+        td_target = reward + self.discount_factor * best_next_q
+
+        # TD error
+        td_error = td_target - current_q
+
+        # Gradient step to update w for that action dimension
+        # w[:, a] ← w[:, a] + alpha * TD_error * x_s
+        self.w[:, action] += self.lr * td_error * x_s
         # ====================================== #
 
     def select_action(self, state):
@@ -72,7 +96,17 @@ class Linear_QN(BaseAlgorithm):
             Tensor: The selected action.
         """
         # ========= put your code here ========= #
-        pass
+        if np.random.rand() < self.epsilon:
+            # Explore: pick random action
+            action_idx = np.random.randint(0, self.num_of_action)
+        else:
+            # Exploit: pick action with max Q(s,a)
+            x_s = state["policy"].cpu().numpy().flatten()  # shape (4,) for CartPole
+            # Q-values for each action
+            q_vals = np.dot(x_s, self.w)  # shape (num_of_action,)
+            action_idx = int(np.argmax(q_vals))
+        
+        return action_idx
         # ====================================== #
 
     def learn(self, env, max_steps):
@@ -90,7 +124,36 @@ class Linear_QN(BaseAlgorithm):
         # Flag to indicate episode termination (boolean)
         # Step counter (int)
         # ========= put your code here ========= #
-        pass
+        obs, _info = env.reset()
+
+        # Track total reward for logging (optional)
+        episode_return = 0.0
+
+        for step in range(max_steps):
+            # 2) Choose action via epsilon-greedy
+            action = self.select_action(obs)
+
+            # 3) Step environment
+            next_obs, reward, terminated, truncated, info = env.step(action)
+            done = terminated or truncated
+
+            # 4) Update the Q-values (linear approximation)
+            # next_action is not used for Q-learning, but it's in the method signature.
+            self.update(obs, action, reward, next_obs, terminated=done)
+
+            # 5) Move to next state
+            obs = next_obs
+            episode_return += reward
+
+            # 6) Break if done
+            if done:
+                break
+
+        # Decay epsilon after each episode
+        self.decay_epsilon()
+
+        # Optionally, return the episode_return if you want to track total reward
+        return episode_return
         # ====================================== #
     
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 import numpy as np
-from RL_Algorithm.RL_base_function_approximation import BaseAlgorithm, ControlType
+from RL_Algorithm.RL_base_function import BaseAlgorithm
 
 
 import torch

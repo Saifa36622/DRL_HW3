@@ -1,0 +1,13 @@
+{
+    "num_of_action": 7,
+    "action_range": [
+        -15,
+        15
+    ],
+    "hidden_dim": 64,
+    "learning_rate": 0.3,
+    "epsilon_decay": 0.9997,
+    "discount": 0.5,
+    "buffer size": 10000,
+    "batch size": 64
+}
