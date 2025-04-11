@@ -159,18 +159,17 @@ or
 
 $$G_t = \sum_{k=0}^{T-t} \gamma^k r_{t+k}$$
 
-
  &emsp;&emsp;where : <br>
 
-  &emsp; &emsp; &emsp;$t$ = Current timestep <br>
+  &emsp; &emsp; &emsp; $t$ = Current timestep <br>
 
-  &emsp; &emsp; &emsp;$r_t$ = Immediate reward at timestep $t$	<br>
+  &emsp; &emsp; &emsp; $r_t$ = Immediate reward at timestep $t$	<br>
 
-  &emsp; &emsp; &emsp;$r_{t+1} , r_{t+2} ,...,$  = Future rewards at time step $t + k$ <br>
+  &emsp; &emsp; &emsp; $r_{t+1} , r_{t+2} ,...,$  = Future rewards at time step $t + k$ <br>
 
-  &emsp; &emsp; &emsp;$T$ = finale episode before update the parameter <br>
-  
-  &emsp; &emsp; &emsp;$γ$ = Discount Factor
+  &emsp; &emsp; &emsp; $T$ = finale episode before update the parameter <br>
+
+  &emsp; &emsp; &emsp; $γ$ = Discount Factor
 
   [flow pic]
 
