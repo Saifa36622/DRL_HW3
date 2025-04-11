@@ -156,7 +156,9 @@ $G_t$ = Return (Sum of future rewards from time t) from this equation
 $$G_t = r_{t} + \gamma r_{t+1} + \gamma^2 r_{t+2} + \dots + \gamma^{T-t-1}r_{T}$$
 
 or 
+
 $$G_t = \sum_{k=0}^{T-t} \gamma^k r_{t+k}$$
+
 
  &emsp;&emsp;where : <br>
   &emsp; &emsp; &emsp;$t$ = Current timestep <br>
