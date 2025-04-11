@@ -117,4 +117,58 @@ then the rest of the algorithm is the same with q-learning by using the selected
 
 ### Deep Q learning (DQN)
 
+Similar to linear q learning but instead of using linear function to approax the q value ,this algorithm use of deep neural networks to approximate value and Q-functions.
 
+In deep Q-learning, Q-functions are represented using deep neural networks. Instead of selecting features and training weights, we learn the parameters $\theta$ to a neural network. The Q-function is $Q(s,a;\theta)$
+
+The update rule for deep Q-learning looks similar to that of updating a linear Q-function.
+
+The deep reinforcement learning TD update is:
+
+$$\theta \leftarrow \theta + \alpha \cdot \delta \cdot \nabla_{\theta} Q(s,a; \theta)$$
+
+where : <br>
+  $\nabla_{\theta} Q(s,a; \theta)$ = gradient of the Q-function<br>
+  $a$ = learning rate <br>
+  $δ$ = TD error from same equation as Linear q-learn
+
+how it work 
+
+[flow pic]
+
+exlpain flow 
+
+
+### MC reinforce (Monte Carlo Policy Gradient Algorithm)
+
+This algorithm directly optimize the policy $𝜋(𝑎∣𝑠; 𝜃)$, by increasing the probability of actions that lead to high rewards.There is no No value function (Q or V) and Update parameter $𝜃$ in the direction that makes good actions more and also similar to Monte Carlo by Wait until the episode ends then Calculate Return $G_t$ Then update
+
+MC REINFORCE Update Rule
+
+$$\theta \leftarrow \theta + \alpha \cdot G_t \cdot \nabla_\theta \log \pi(a_t|s_t; \theta)$$
+
+where :
+
+$𝜃$ = Policy parameter (Weight of NN) -> [ $\nabla_\theta \log \pi(a_t|s_t; \theta)$ = Gradient of Log Policy Probability ] <br>
+$a$ = Learning Rate <br>
+$G_t$ = Return (Sum of future rewards from time t) from this equation 
+
+$$G_t = r_{t} + \gamma r_{t+1} + \gamma^2 r_{t+2} + \dots + \gamma^{T-t-1}r_{T}$$
+
+or 
+$$
+G_t = \sum_{k=0}^{T-t} \gamma^k r_{t+k}
+$$
+
+ &emsp;&emsp;where : <br>
+  &emsp; &emsp; &emsp;$t$ = Current timestep <br>
+  &emsp; &emsp; &emsp;$r_t$ = Immediate reward at timestep $t$	<br>
+  &emsp; &emsp; &emsp;$r_{t+1} , r_{t+2} ,...,$  = Future rewards at time step $t + k$ <br>
+  &emsp; &emsp; &emsp;$T$ = finale episode before update the parameter <br>
+  &emsp; &emsp; &emsp;$γ$ = Discount Factor
+
+  [flow pic]
+
+exlpain flow 
+
+### Proximal policy optimization (PPO)
