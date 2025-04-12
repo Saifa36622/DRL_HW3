@@ -157,6 +157,7 @@ Softmax is a function that turns any raw score (real numbers) → into probabili
 </p>
 
 or we can write in DRL term as 
+
 $$\pi_\theta(a|s) = \frac{e^{f(s, a)}}{\sum_{b} e^{f(s, b)}}$$
 
 where : 
