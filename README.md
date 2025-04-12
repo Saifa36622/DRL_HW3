@@ -145,7 +145,7 @@ This algorithm directly optimize the policy or policy base $𝜋(𝑎∣𝑠; �
 
 Update parameter $𝜃$ in the direction that makes good actions increaseing and also similar to Monte Carlo by Wait until the episode ends then Calculate Return $G_t$ Then update
 
-when it policy base it mean there is no value function (Q or V) .Instead of Deterministic Policy that forced randomness from ε like linear q learn or DQN that use ε-greedy to selected the random action this algorithm are using Stochastic Policy that mean the agent will choose probability distribution over actions and we acn achive that apply Softmax function at the output layer of the Neural Network
+when it policy base it mean there is no value function (Q or V) .Instead of Deterministic Policy that forced randomness from ε like linear q learn or DQN that use ε-greedy to selected the random action this algorithm are using Stochastic Policy that mean the agent will choose probability distribution over actions and we acn achive that by apply Softmax function at the output layer of the Neural Network
 
 **Softmax function**
 
@@ -199,9 +199,9 @@ Now, the agent doesn't pick action 0 directly like argmax but instead interpret 
 - Action 2 → 10% chance
 
 
-MC REINFORCE Update Rule
+**MC REINFORCE Update Rule**
 
-$$\theta \leftarrow \theta + \alpha \cdot G_t \cdot \nabla_\theta \log \pi(a_t|s_t; \theta)$$
+$$\theta \leftarrow \theta + \alpha \cdot G_t \cdot \nabla_\theta \log \pi(a_t|s_t, \theta)$$
 
 where :
 
@@ -228,8 +228,14 @@ $$G_t = \sum_{k=0}^{T-t} \gamma^k r_{t+k}$$
   &emsp; &emsp; &emsp; $γ$ = Discount Factor
 
 
-  [flow pic]
+**ALgorithm flow**
 
-exlpain flow 
+
+<p align="center">
+  <img src="image/image13.png" alt="alt text">
+</p>
+
+
+
 
 ### Proximal policy optimization (PPO)
