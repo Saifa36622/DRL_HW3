@@ -228,12 +228,20 @@ $$G_t = \sum_{k=0}^{T-t} \gamma^k r_{t+k}$$
   &emsp; &emsp; &emsp; $γ$ = Discount Factor
 
 
-**ALgorithm flow**
+**Algorithm flow**
 
 
 <p align="center">
   <img src="image/image13.png" alt="alt text">
 </p>
+
+The flow of the Monte Carlo REINFORCE algorithm begins with the initialization of the policy parameters 𝜃, which represent the weights of the neural network. The environment provides the initial state $s_0$ which is passed into the neural network to produce a raw output or logit for each possible action. This output is then processed through a Softmax function to convert it into a probability distribution $π(a∣s)$, ensuring that actions are chosen stochastically based on their probabilities.
+
+An action is then sampled from this distribution and executed in the environment. The environment responds with feedback in the form of the next state, the reward received, and a termination flag. If the episode is not yet done, the process repeats: passing the new state through the neural network, applying softmax, sampling a new action, and interacting with the environment.
+
+Once the episode ends ( when "done" is True), the algorithm proceeds to update the policy parameters. This update is based on the REINFORCE rule, which adjusts 𝜃 using the return $G_t$(the total discounted reward from timestep $t$ to the end of the episode) multiplied by the gradient of the log probability of the taken action $∇θlogπ(a_t∣s_t,θ)$. This gradient indicates the direction to adjust the policy to make the chosen action more or less likely in similar future situations.
+
+Finally, the process loops back to the beginning, starting a new episode with the updated policy parameters.
 
 
 
