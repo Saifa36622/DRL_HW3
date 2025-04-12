@@ -141,7 +141,62 @@ exlpain flow
 
 ### MC reinforce (Monte Carlo Policy Gradient Algorithm)
 
-This algorithm directly optimize the policy $𝜋(𝑎∣𝑠; 𝜃)$, by increasing the probability of actions that lead to high rewards.There is no No value function (Q or V) and Update parameter $𝜃$ in the direction that makes good actions more and also similar to Monte Carlo by Wait until the episode ends then Calculate Return $G_t$ Then update
+This algorithm directly optimize the policy or policy base $𝜋(𝑎∣𝑠; 𝜃)$, by increasing the probability of actions that lead to high rewards.
+
+Update parameter $𝜃$ in the direction that makes good actions increaseing and also similar to Monte Carlo by Wait until the episode ends then Calculate Return $G_t$ Then update
+
+when it policy base it mean there is no value function (Q or V) .Instead of Deterministic Policy that forced randomness from ε like linear q learn or DQN that use ε-greedy to selected the random action this algorithm are using Stochastic Policy that mean the agent will choose probability distribution over actions and we acn achive that apply Softmax function at the output layer of the Neural Network
+
+**Softmax function**
+
+Softmax is a function that turns any raw score (real numbers) → into probability distribution by Take exp of every score so all values become positive & bigger gap for higher scores then divide by sum of all exp scores to normalize into probability (sum to 1)
+
+
+<p align="center">
+  <img src="image/image12.png" alt="alt text">
+</p>
+
+or we can write in DRL term as 
+$$\pi_\theta(a|s) = \frac{e^{f(s, a)}}{\sum_{b} e^{f(s, b)}}$$
+
+where : 
+
+$\pi_\theta(a|s)$ = probability of choosing action 𝑎 given state 𝑠 or probability distribution over actions
+
+$e^{f(s, a)}$ = output score from NN
+
+$\sum_{b} e^{f(s, b)}$ = sum of output score
+
+**Example**
+
+if we wan to aply softmax to 3 action score 
+
+NN output for 3 actions at state $s$
+
+- Action 0 -> output 2.0
+- Action 1 -> output 1.0
+- Action 2 -> output 0.1
+
+to compute we will apply 
+
+$$e^z = [e^2.0,e^1.0,e^0.1] ≈ [7.39 ,2.71,1.10]$$
+
+Sum all 
+
+$$sum = 7.39 + 2.71 +1.10 = 11.2$$
+
+then Compute Probability of each action
+
+- Action 0 -> 7.39 / 11.2 ≈ 0.659 
+- Action 1 -> 2.71 / 11.2 ≈ 0.242
+- Action 2 -> 1.10 / 11.2 ≈ .098
+
+Now, the agent doesn't pick action 0 directly like argmax but instead interpret the score as % 
+
+- Action 0 → 66% chance
+- Action 1 → 24% chance
+- Action 2 → 10% chance
+
 
 MC REINFORCE Update Rule
 
@@ -170,6 +225,7 @@ $$G_t = \sum_{k=0}^{T-t} \gamma^k r_{t+k}$$
   &emsp; &emsp; &emsp; $T$ = finale episode before update the parameter <br>
 
   &emsp; &emsp; &emsp; $γ$ = Discount Factor
+
 
   [flow pic]
 
