@@ -129,7 +129,7 @@ In deep Q-learning, Q-functions are represented using deep neural networks. Inst
 
 "Eval Net" or "Evaluation Network" is the main neural network in Deep Q-Network (DQN) used to **estimate the current Q-value** 𝑄 ( 𝑠 , 𝑎 ; 𝜃 ) given the current state 𝑠  and action 𝑎 .It is trained frequently using the loss between its own prediction and the target Q-value generated using Target Net.
 
-This component other than use to **estimate** it still use as **action selection** ,and in this project we will use Epsilon-Greedy that will selected by $argmax_a Q(s,a;θ)$
+This component other than use to **estimate the current Q-value** it still use as **action selection** ,and in this project we will use Epsilon-Greedy that will selected by $argmax_a Q(s,a;θ)$
 
 The Eval Net use TD update to update the weight $θ$ (aka Gradient Descent equation) that will updated via backpropagation using the loss function:
 
