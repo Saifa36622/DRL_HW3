@@ -213,7 +213,7 @@ Target network soft update equation
 
 $$\theta^- \leftarrow \tau \theta + (1 - \tau) \theta^-$$
 
-Slowly follow Eval Net with small update rate $𝜏$ (ex: 0.005).
+Slowly follow Eval Net with small update rate $𝜏$ (ex: 0.005) and $τ$ is Soft Update Rate parameter
 
 Hard update (evry N stetp)
 
@@ -231,9 +231,48 @@ how it work
   (Figure (1) from Wang et al., "Flexible Transmission Network Expansion Planning Based on DQN Algorithm")
 </p>
 
+1. initial state 
 
+pass the state $s_0$ from the enviroment to the eval net
 
+2. Choose Action $a_t$
 
+in eval net ,It use epilon greedy to seleceted the action 
+with probability $𝜖$ -> selected random action or probability $ 1- 𝜖$ -> selected by $argmax_a Q(s,a;θ)$ from the estimate $Q(s,a;θ)$ from NN 
+
+3. Execute and revieve observation feedback 
+
+Environment responds the param such as Next state $s_{t+1}$ ,reward $r_t$ or done flag
+
+4. Store experience in Replay Buffer
+
+store the feedback from the enviroment in the replay buffer 
+
+5. Sample mini-batch from Replay Buffer
+
+Randomly sample multiple past experiences (feedback) at batch size $k$ (such as 32 or 64) back in to eval net for the NN model in eval net to estimate (to calculate on loss funciton in the future)
+
+6. Calculate Target Q-Value (from Target Net)
+
+Randomly sample multiple past experiences (feedback) at batch size $k$ (such as 32 or 64) to target net for the NN model in target net too (to calculate on loss funciton in the future)
+
+7. Calculate Loss Function
+
+calculate loss function from the result of the eval net and target net at the same Replay Buffer batch at time $t$
+
+$$ L(θ)=E[(Q_{target} ​− Q_{eval} ​ (s,a;θ))^2 ]$$
+
+8. Update Eval Net (Gradient Descent)
+
+then update the Eval Net weight using the loss function that we calculate 
+
+$$θ←θ−α∇_θ ​ L(θ)$$
+
+9.  Update Target Net (Slowly Follow Eval Net)
+
+ on soft update or Hard Update every N steps
+
+10. Then repeat the step 
 
 ### MC reinforce (Monte Carlo Policy Gradient Algorithm)
 
