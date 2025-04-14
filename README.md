@@ -122,7 +122,16 @@ Similar to linear q learning but instead of using linear function to approax the
 In deep Q-learning, Q-functions are represented using deep neural networks. Instead of selecting features and training weights, we learn the parameters $\theta$ to a neural network. The Q-function is $Q(s,a;\theta)$
 
 
-The deep reinforcement learning TD update (aka Gradient Descent) is:
+
+**component of DQN** 
+
+1. **Eval Net (Online Net)**
+
+"Eval Net" or "Evaluation Network" is the main neural network in Deep Q-Network (DQN) used to **estimate the current Q-value** 𝑄 ( 𝑠 , 𝑎 ; 𝜃 ) given the current state 𝑠  and action 𝑎 .It is trained frequently using the loss between its own prediction and the target Q-value generated using Target Net.
+
+This component other than use to **estimate** it still use as **action selection** ,and in this project we will use Epsilon-Greedy that will selected by $argmax_a Q(s,a;θ)$
+
+The Eval Net use TD update to update the weight $θ$ (aka Gradient Descent equation) that will updated via backpropagation using the loss function:
 
 $$\theta \leftarrow \theta + \alpha \cdot \delta \cdot \nabla_{\theta} Q(s,a; \theta)$$
 
@@ -133,29 +142,41 @@ where : <br>
 
 or we can write it as 
 
+$$θ← θ - α⋅∇ θ ​ L(θ)$$
 
+where : 
 
-**component of DQN** 
+$θ$ = Model Parameters -> Weight of NN
 
-1. Eval Net (Online Net)
+$L(θ)$ = Loss Function -> How bad model prediction is (validate by MSE)
 
+$∇_θL(θ)$ =  Gradient of Loss -> Tells which direction decrease the Loss the most
 
+$α$ = Learning Rate	
 
-2. Target Net
+**both eqution work the same by Update to move 𝜃 a little bit towards lower loss**
 
-Target network soft update equation 
+2. **DQN loss function**
 
-$$\theta^- \leftarrow \tau \theta + (1 - \tau) \theta^-$$
+aka a mathematical way to measure How wrong your model is.by compares
 
-Hard update (evry N stetp)
+**What your model thinks → vs → What is the correct answer**
 
-$$\theta^- = \theta$$
+Formula deffinition 
 
-3. DQN lossfunction 
+$$L(θ)=f(Prediction,Ground Truth)$$
 
+where :
+
+$𝜃$ = Model weight (to be updated)
+
+Prediction → From model output such as $Q(s,a;θ)$
+
+Ground Truth → Real answer 
+
+So we can write it in DQN term as follow 
 
 $$L(v)=E[(Q_{max} ​ − Q_{eval} ​ (s_τ ​ ,a_τ ​ ;v))^2 ]$$
-
 
 or we can write it as 
 
@@ -166,6 +187,31 @@ when
 
 $$y = r+γ \cdot maxQ_{target} ​ (s^′ ,a^′ ;θ^- )$$
 
+where :
+
+$L(θ)$ = Loss Function	
+
+$𝑟$ = real reward from environment
+
+$𝛾$ = discount factor
+
+$Q(s,a;θ)$ = Predict from Eval Net
+
+$Q(s^′,a^′;θ^-)$ = Target from Target Net
+
+the target of loss function is to **Minimize Loss**	to improve model accuracy and the purpose of the Gradient of Loss	is to Tells which **direction to change the weight**
+
+
+
+3. Target Net
+
+Target network soft update equation 
+
+$$\theta^- \leftarrow \tau \theta + (1 - \tau) \theta^-$$
+
+Hard update (evry N stetp)
+
+$$\theta^- = \theta$$
 how it work 
 
 <p align="center">
