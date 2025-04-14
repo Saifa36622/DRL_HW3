@@ -112,7 +112,7 @@ So we can write the update rule in full form as this
   <img src="image/image11.png" alt="alt text">
 </p>
 
-then the rest of the algorithm is the same with q-learning by using the selected policy (in this project will be epsilon greedy) to selected the optimal action
+then the rest of the algorithm is the same with q-learning by using the selected policy (in this project will be epsilon greedy) to selected the optimal action and so on
 
 
 ### Deep Q learning (DQN)
@@ -134,9 +134,18 @@ where : <br>
 
 how it work 
 
-[flow pic]
+<p align="center">
+  <img src="image/image14.png" alt="alt text">
+</p>
+<p align="center">
+  Example Q-network (DQN) algorithm flow chart <br>
+  (Figure (1) from Wang et al., "Flexible Transmission Network Expansion Planning Based on DQN Algorithm")
+</p>
 
-exlpain flow 
+or we can write it in simple flow 
+
+
+
 
 
 ### MC reinforce (Monte Carlo Policy Gradient Algorithm)
