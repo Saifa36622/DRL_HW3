@@ -205,13 +205,22 @@ the target of loss function is to **Minimize Loss**	to improve model accuracy an
 
 3. Target Net
 
+Target Network is a separate neural network in the Deep Q-Network (DQN) algorithm that is used to provide a stable and consistent target value **aka $𝑄_{max}$ when calculating the loss** for training the Evaluation Network (Eval Net).
+
+If you directly calculate target using Eval Net (same network that is learning), the target will keep changing every step → very unstable.
+
 Target network soft update equation 
 
 $$\theta^- \leftarrow \tau \theta + (1 - \tau) \theta^-$$
 
+Slowly follow Eval Net with small update rate $𝜏$ (ex: 0.005).
+
 Hard update (evry N stetp)
 
 $$\theta^- = \theta$$
+
+Copy Eval Net weight to Target Net every few steps (ex: every 1000 steps).
+
 how it work 
 
 <p align="center">
