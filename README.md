@@ -382,3 +382,20 @@ Finally, the process loops back to the beginning, starting a new episode with th
 
 
 ### Proximal policy optimization (PPO)
+
+Proximal policy optimization (PPO) is an on-policy, policy gradient reinforcement learning method for environments with a discrete or continuous action space. It directly estimates a **stochastic policy** and uses a **value function critic** to estimate the value of the policy. This algorithm alternates between sampling data through environmental interaction and optimizing a clipped surrogate objective function using stochastic gradient descent
+
+The clipped surrogate objective function improves training stability by limiting the size of the policy change at each step. For continuous action spaces, this agent does not enforce constraints set in the action specification; therefore, if you need to enforce action constraints, you must do so within the environment.
+
+
+**PPO component**
+
+1. Actor $π(A|S;θ)$ — The actor, with parameters θ, outputs the conditional probability of taking each action A when in state S as one of the following:
+
+- Discrete action space — The probability of taking each discrete action. The sum of these probabilities across all actions is 1.
+
+- Continuous action space — The mean and standard deviation of the Gaussian probability distribution for each continuous action.
+
+2. Critic $V(S;ϕ)$ — The critic, with parameters ϕ, takes observation S and returns the corresponding expectation of the discounted long-term reward.
+
+During training, the agent tunes the parameter values in $θ$.
