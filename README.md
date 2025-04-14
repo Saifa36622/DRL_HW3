@@ -390,12 +390,12 @@ The clipped surrogate objective function improves training stability by limiting
 
 **PPO component**
 
-1. Actor $π(A|S;θ)$ — The actor, with parameters θ, outputs the conditional probability of taking each action A when in state S as one of the following:
+1. Actor $π(A|S;θ)$ — The actor, with parameters $θ$, outputs the conditional probability of taking each action A when in state S as one of the following:
 
 - Discrete action space — The probability of taking each discrete action. The sum of these probabilities across all actions is 1.
 
 - Continuous action space — The mean and standard deviation of the Gaussian probability distribution for each continuous action.
 
-2. Critic $V(S;ϕ)$ — The critic, with parameters ϕ, takes observation S and returns the corresponding expectation of the discounted long-term reward.
+2. Critic $V(S;ϕ)$ — The critic, with parameters $ϕ$, takes observation S and returns the corresponding expectation of the discounted long-term reward.
 
 During training, the agent tunes the parameter values in $θ$.
