@@ -238,7 +238,7 @@ pass the state $s_0$ from the enviroment to the eval net
 2. Choose Action $a_t$
 
 in eval net ,It use epilon greedy to seleceted the action 
-with probability $𝜖$ -> selected random action or probability $ 1- 𝜖$ -> selected by $argmax_a Q(s,a;θ)$ from the estimate $Q(s,a;θ)$ from NN 
+with probability $𝜖$ -> selected random action or probability $1- 𝜖$ -> selected by $argmax_a Q(s,a;θ)$ from the estimate $Q(s,a;θ)$ from NN 
 
 3. Execute and revieve observation feedback 
 
