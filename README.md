@@ -121,16 +121,50 @@ Similar to linear q learning but instead of using linear function to approax the
 
 In deep Q-learning, Q-functions are represented using deep neural networks. Instead of selecting features and training weights, we learn the parameters $\theta$ to a neural network. The Q-function is $Q(s,a;\theta)$
 
-The update rule for deep Q-learning looks similar to that of updating a linear Q-function.
 
-The deep reinforcement learning TD update is:
+The deep reinforcement learning TD update (aka Gradient Descent) is:
 
 $$\theta \leftarrow \theta + \alpha \cdot \delta \cdot \nabla_{\theta} Q(s,a; \theta)$$
 
 where : <br>
   $\nabla_{\theta} Q(s,a; \theta)$ = gradient of the Q-function<br>
   $a$ = learning rate <br>
-  $δ$ = TD error from same equation as Linear q-learn
+  $δ$ = TD error (Target - Prediction)
+
+or we can write it as 
+
+
+
+**component of DQN** 
+
+1. Eval Net (Online Net)
+
+
+
+2. Target Net
+
+Target network soft update equation 
+
+$$\theta^- \leftarrow \tau \theta + (1 - \tau) \theta^-$$
+
+Hard update (evry N stetp)
+
+$$\theta^- = \theta$$
+
+3. DQN lossfunction 
+
+
+$$L(v)=E[(Q_{max} ​ − Q_{eval} ​ (s_τ ​ ,a_τ ​ ;v))^2 ]$$
+
+
+or we can write it as 
+
+
+$$L(θ)=(y−Q(s,a;θ))^2$$
+
+when 
+
+$$y = r+γ \cdot maxQ_{target} ​ (s^′ ,a^′ ;θ^- )$$
 
 how it work 
 
@@ -141,8 +175,6 @@ how it work
   Example Q-network (DQN) algorithm flow chart <br>
   (Figure (1) from Wang et al., "Flexible Transmission Network Expansion Planning Based on DQN Algorithm")
 </p>
-
-or we can write it in simple flow 
 
 
 
