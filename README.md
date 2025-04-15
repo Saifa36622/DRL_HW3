@@ -412,7 +412,8 @@ $$L^{CLIP} (θ)=E t ​ [min(r_t ​ (θ)A_t \space​ ,\space clip(r_t ​ (θ)
 
 where :
 
-$r_t ​ (θ)A_t$ = Normal Policy Gradient
+$r_t ​ (θ)A_t$ = Normal Policy Gradient <br>
+
 
 $clip(r_t ​ (θ)\space,\space 1−ϵ \space ,\space 1+ϵ)A_t$ = Force $𝑟_𝑡$ ​ to stay between $1 − 𝜖$  and $1 + 𝜖$ to limit update size
 
@@ -428,7 +429,7 @@ such as the example pic
 
  The x-axis represents the probability ratio $𝑟$ that come from $
 r(\theta) = \frac{\pi_\theta(a|s)}{\pi_{\theta_{\text{old}}}(a|s)}
-$ , and the y-axis shows the clipped objective function $𝐿_{CLIP}$.
+$ or ratio between new and old policies, and the y-axis shows the clipped objective function $𝐿_{CLIP}$.
 
  The left graph shows the case when the advantage 𝐴 > 0 , meaning the action taken was better than expected. In this case, the function grows linearly with $𝑟$ up to a threshold at $1 + 𝜖$, after which it flattens. This prevents the new policy from becoming too confident in good actions. 
  
@@ -518,4 +519,87 @@ $δ_t$ = TD error
 
 in this project we will selected the **GAE method** cause it designed to balance learning speed and stability.
 
-4. Loss function for PPO
+4. Value function for Critic 
+
+In PPO, the actor chooses actions (via the policy), and the critic helps evaluate how good those actions are. The critic is trained to approximate the true return, which we call:
+
+$$V_t^{\text{target}} = G_t = \sum_{k=0}^{T-t} \gamma^k r_{t+k}
+$$
+
+or in Generalized Advantage Estimation (GAE) term
+
+$$V_t^{\text{target}} = \hat{A}_t + V(s_t)$$
+
+
+This target value tells the critic what the true total reward from state $s_t$ was (either via Monte Carlo or bootstrapped from next state values).
+
+Value Function Loss Formula
+
+To train the critic or to make the value predictions accurate
+PO minimizes the squared difference between:
+
+- The predicted value $V_{\theta}(s_t)$
+- The actual return $V_t^{\text{target}}$
+
+by this equation 
+
+$$L^{\text{VF}}_t(\theta) = \left( V_\theta(s_t) - V_t^{\text{target}} \right)^2$$
+
+This is just mean squared error (MSE), and it tells the critic how much error the critic esmitate was off on this state
+
+5. Entropy Bonus
+
+Entropy Bonus is used in PPO (and other DRL algorithms) to encourage exploration rather than premature convergence to a deterministic (greedy) policy too early.
+
+Equation of Entropy Bonus
+
+$$S[\pi](s) = - \sum_{a} \pi_\theta(a|s) \cdot \log \pi_\theta(a|s)
+$$
+
+where : 
+
+$\pi_\theta(a|s)$ = probability of action $𝑎$  at state $𝑠$ 
+
+then we can write it as in Entropy Bonus Loss added in PPO 
+
+$$L^{\text{entropy}}_t(\theta) = c_2 \cdot S[\pi](s_t)$$
+
+
+where : 
+
+$c_2$ = entropy coefficient (usually small like 0.01) -> Controls how strong exploration force is
+
+
+$S[\pi](s_t)$ = entropy at state $s_t$
+
+6. Loss function for PPO
+
+similar to loss function from DQN ,for PPO loss function is improve the policy (how actions are selected) while preventing updates that are too large, which can destabilize training. So, the loss function in PPO balances Policy improvement , Stability (small policy changes),Value function learning and Entropy for exploration
+
+the loss function equation for PPO is 
+
+$$L^{PPO} (θ)= \mathbb{E}_t ​ [L_t^{CLIP} ​ (θ)− c_1 ​ L_t^{VF} ​ (θ)+c_2 ​ S[π_θ ​ ](s_t ​ )]$$
+
+Where:
+
+$L_t^{CLIP}$ = Clipped policy surrogate loss
+
+$L_t^{VF}$ = Value function loss (critic)
+
+$S[π_θ ​ ](s_t ​ )$ = Entropy bonus (encourages exploration)
+
+$c_1 , c_2$ = Coefficients to balance the terms
+
+then we write the PPO from this suedo code   
+
+<p align="center">
+  <img src="image/image16.png" alt="alt text">
+</p>
+<p align="center">
+  PPO Algorithm Pseudocode Flow (Actor-Critic Style)
+  <br>
+  (Figure (3) from Schulman et al., "Proximal Policy Optimization Algorithms")
+</p>
+
+as 
+
