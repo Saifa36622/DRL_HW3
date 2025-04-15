@@ -505,7 +505,7 @@ $$\delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)$$
 
 or we can write it in full form as 
 
-$$\hat{A}_t = \sum_{l=0}^{T - t - 1} (\gamma \lambda)^l \left( r_{t+l} + \gamma V(s_{t+l+1}) - V(s_{t+l}) \right)$$
+$$A_t = \sum_{l=0}^{T - t - 1} (\gamma \lambda)^l \left( r_{t+l} + \gamma V(s_{t+l+1}) - V(s_{t+l}) \right)$$
 
 where : 
 
