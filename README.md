@@ -617,13 +617,13 @@ then we write the PPO from this suedo code
 the we can write the flow as
 
 <p align="center">
-  <img src="image/image17.png" alt="alt text">
+  <img src="image/PPO5.png" alt="alt text">
 </p>
 
 The process begins with initialization of the actor and critic networks. An initial state $s_0$ is sampled from the environment, and the actor network (parameterized by $θ$) selects an action $a_t$ based on the current policy $π_θ$. The selected action is then executed in the environment, which provides feedback
 
 Next, the Advantage Function is calculated using Generalized Advantage Estimation (GAE) to evaluate how good an action was compared to the expected value. Simultaneously, the critic network (parameterized by 
-$𝜙$) estimates the value function $V_ϕ(s)$, and its parameters are updated via gradient descent using the TD-error such as this equation 
+$𝜙$) estimates the value function $V_ϕ(s)$, and its parameters are updated via gradient descent from loss function such as this equation 
 
 Gradient Descent equation
 
