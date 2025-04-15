@@ -442,11 +442,8 @@ such as the example pic
  Another approach, which can be used as an **alternative** to the clipped surrogate objective, or in addition to it 
 
 
-$$
-L^{\text{KL-Penalty}}(\theta) 
-= \hat{\mathbb{E}}_t \Biggl[ \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)} \,\hat{A}_t 
-\;-\; \beta \cdot \mathrm{KL}\bigl(\,\pi_{\theta_{\text{old}}}(\cdot \mid s_t)\;\big\|\;\pi_\theta(\cdot \mid s_t)\bigr) \Biggr]
-$$
+$$L^{\text{KL-Penalty}}(\theta) = \hat{\mathbb{E}}_t \left[ \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)} \hat{A}_t - \beta \cdot \mathrm{KL}\left(\pi_{\theta_{\text{old}}}(\cdot \mid s_t)\;\|\;\pi_\theta(\cdot \mid s_t)\right) \right]$$
+
 
 
 
@@ -546,10 +543,7 @@ PO minimizes the squared difference between:
 
 by this equation 
 
-$$
-L^{\text{VF}}_t(\theta) 
-= \Bigl(V_\theta(s_t) \;-\; V_t^{\text{target}}\Bigr)^2
-$$
+$$L^{\text{VF}}_t(\theta) = \left(V_\theta(s_t) - V_t^{\text{target}}\right)^2$$
 
 
 This is just mean squared error (MSE), and it tells the critic how much error the critic esmitate was off on this state
@@ -570,9 +564,8 @@ $\pi_\theta(a|s)$ = probability of action $𝑎$  at state $𝑠$
 
 then we can write it as in Entropy Bonus Loss added in PPO 
 
-$$
-L^{\text{entropy}}_t(\theta) = c_2 \cdot S_\pi
-$$
+$$L^{\text{entropy}}_t(\theta) = c_2 \cdot S_\pi$$
+
 
 
 where : 
