@@ -616,3 +616,27 @@ then we write the PPO from this suedo code
 
 as 
 
+<p align="center">
+  <img src="image/image17.png" alt="alt text">
+</p>
+
+The process begins with initialization of the actor and critic networks. An initial state $s_0$ is sampled from the environment, and the actor network (parameterized by $θ$) selects an action $a_t$ based on the current policy $π_θ$. The selected action is then executed in the environment, which provides feedback
+
+Next, the Advantage Function is calculated using Generalized Advantage Estimation (GAE) to evaluate how good an action was compared to the expected value. Simultaneously, the critic network (parameterized by 
+$𝜙$) estimates the value function $V_ϕ(s)$, and its parameters are updated via gradient descent using the TD-error such as this equation 
+
+Gradient Descent equation
+
+$$ϕ←ϕ−α⋅∇_ϕ ​ L^VF (ϕ)$$
+
+Where:
+
+$α$ = learning rate
+
+$∇_ϕ$ = gradient of the value loss -> critic weights
+
+Entropy is then calculated to encourage exploration and prevent premature convergence.
+
+Using the advantage estimates and clip ratio, the loss function is formed (including the clipped surrogate loss, entropy bonus, and value function loss). The final step is applying gradient descent to minimize the total loss and update the actor network's parameters $θ$
+
+Then loop it all agian
