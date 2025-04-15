@@ -399,3 +399,123 @@ The clipped surrogate objective function improves training stability by limiting
 2. Critic $V(S;ϕ)$ — The critic, with parameters $ϕ$, takes observation S and returns the corresponding expectation of the discounted long-term reward.
 
 During training, the agent tunes the parameter values in $θ$.
+
+**PPO key method**
+
+1. Clipped Surrogate
+
+key trick used in PPO to prevent the updated policy from moving too far away from the old policy in a single update.(limit policy update)
+
+by using this equation 
+
+$$L^{CLIP} (θ)=E t ​ [min(r_t ​ (θ)A_t \space​ ,\space clip(r_t ​ (θ)\space,\space 1−ϵ \space ,\space 1+ϵ)A_t)]$$
+
+where :
+
+$r_t ​ (θ)A_t$ = Normal Policy Gradient
+
+$clip(r_t ​ (θ)\space,\space 1−ϵ \space ,\space 1+ϵ)A_t$ = Force $𝑟_𝑡$ ​ to stay between $1 − 𝜖$  and $1 + 𝜖$ to limit update size
+
+such as the example pic 
+
+<p align="center">
+  <img src="image/image15.png" alt="alt text">
+</p>
+<p align="center">
+  Visualization of the PPO Clipped Surrogate Objective <br>
+  (Figure (2) from Schulman et al., "Proximal Policy Optimization Algorithms")
+</p>
+
+ The x-axis represents the probability ratio $𝑟$ that come from $
+r(\theta) = \frac{\pi_\theta(a|s)}{\pi_{\theta_{\text{old}}}(a|s)}
+$ , and the y-axis shows the clipped objective function $𝐿_{CLIP}$.
+
+ The left graph shows the case when the advantage 𝐴 > 0 , meaning the action taken was better than expected. In this case, the function grows linearly with $𝑟$ up to a threshold at $1 + 𝜖$, after which it flattens. This prevents the new policy from becoming too confident in good actions. 
+ 
+ The right graph shows the case when 𝐴 < 0 , indicating a worse than expected action. Here, the loss remains flat until $𝑟 < 1 − 𝜖$ , where it starts to penalize the update. 
+ 
+ In both cases, the clipping mechanism ensures the update remains within a trust region $[1−ϵ,1+ϵ]$, preventing large and destabilizing changes to the policy, thereby improving training stability and efficiency.
+
+
+ 2. Adaptive KL Penalty Coefficient (optional)
+
+ Another approach, which can be used as an **alternative** to the clipped surrogate objective, or in addition to it 
+
+ $$
+L^{KL}(\theta) = \mathbb{E}_t \left[ \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)} \cdot A_t - \beta \cdot D_{KL} \left[ \pi_{\theta_{\text{old}}}(\cdot|s_t) \| \pi_\theta(\cdot|s_t) \right] \right]
+$$
+
+Where:
+
+$L^{KL}(\theta)$ = Loss with KL penalty
+
+$A_t$ = Advantage at timestep $t$
+
+$\beta$ = Adaptive KL penalty coefficient
+ 
+$D_{KL}$ = KL Divergence between old and new policy
+
+Adaptive KL Penalty are adjusts $\beta$ based on how much the new policy diverges from the old policy.
+
+** **It is optional for PPO algorithm so in this project we will not yet implement that** **
+
+ 3. Advantage function
+
+advantage function is function helps us understand how much better (or worse) an action is compared to the average action in a particular state.
+
+The advantage function is defined as:
+
+$$A^π (s,a)=Q^π (s,a) − V^π(s)$$
+
+when : 
+
+$Q^π (s,a)$ = The expected return after taking action $𝑎$ in state $𝑠$  and following policy $𝜋$ 
+
+$V^π(s)$ = he expected return from state $𝑠$ following policy $𝜋$
+
+from the equation it will indicate that If I take action $𝑎$ now, is it better than my average action at state $𝑠$ or not ? ,So the advantage functions help reduce the variance in policy gradient updates, leading to more stable and efficient learning.
+
+**Different Methods for Estimating Advantage**
+
+there are multiple ways to estimate the advantage such as 
+
+- Simple Advantage (One-step TD)
+
+$$A^t ​ =r_t ​ +γV(s_{t+1} ​ )−V(s_t ​)$$
+
+this is quick but can be high variance
+
+- Monte Carlo Advantage
+
+$$A^t ​ =G_t ​ − V(s_t ​)$$
+
+More accurate but high variance and needs to wait until episode ends.
+
+
+- GAE (Generalized Advantage Estimation)
+
+$$\hat{A}_t = \sum_{l=0}^{T - t - 1} (\gamma \lambda)^l \delta_{t+l}
+$$
+
+when 
+
+$$\delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)$$
+
+
+or we can write it in full form as 
+
+$$\hat{A}_t = \sum_{l=0}^{T - t - 1} (\gamma \lambda)^l \left( r_{t+l} + \gamma V(s_{t+l+1}) - V(s_{t+l}) \right)$$
+
+where : 
+
+$λ$ = controls bias-variance tradeoff
+
+$γ$ = discount factor
+
+$V(s)$ = value function
+
+$δ_t$ = TD error
+
+in this project we will selected the **GAE method** cause it designed to balance learning speed and stability.
+
+4. Loss function for PPO
