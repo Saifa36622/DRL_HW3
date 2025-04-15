@@ -578,7 +578,9 @@ similar to loss function from DQN ,for PPO loss function is improve the policy (
 
 the loss function equation for PPO is 
 
-$$L^{PPO} (θ)= \mathbb{E}_t ​ [L_t^{CLIP} ​ (θ)− c_1 ​ L_t^{VF} ​ (θ)+c_2 ​ S[π_θ ​ ](s_t ​ )]$$
+
+$$ L^{PPO} (θ)= \mathbb{E}_t ​ [L_t^{CLIP} ​ (θ)− c_1 ​ L_t^{VF} ​ (θ)+c_2 ​ S[π_θ ​ ](s_t ​ )] $$
+
 
 Where:
 
