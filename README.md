@@ -427,9 +427,8 @@ such as the example pic
   (Figure (2) from Schulman et al., "Proximal Policy Optimization Algorithms")
 </p>
 
- The x-axis represents the probability ratio $𝑟$ that come from $
-r(\theta) = \frac{\pi_\theta(a|s)}{\pi_{\theta_{\text{old}}}(a|s)}
-$ or ratio between new and old policies, and the y-axis shows the clipped objective function $𝐿_{CLIP}$.
+ The x-axis represents the probability ratio $𝑟$ that come from $r(\theta) = \frac{\pi_\theta(a \mid s)}{\pi_{\theta_{\text{old}}}(a \mid s)}$
+  or ratio between new and old policies, and the y-axis shows the clipped objective function $𝐿_{CLIP}$.
 
  The left graph shows the case when the advantage 𝐴 > 0 , meaning the action taken was better than expected. In this case, the function grows linearly with $𝑟$ up to a threshold at $1 + 𝜖$, after which it flattens. This prevents the new policy from becoming too confident in good actions. 
  
@@ -444,7 +443,9 @@ $ or ratio between new and old policies, and the y-axis shows the clipped object
 
 
 $$
-L^{\text{KL-Penalty}}(\theta) = \hat{\mathbb{E}}_t \left[ \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)} \hat{A}_t - \beta \cdot \text{KL}\left( \pi_{\theta_{\text{old}}}(\cdot|s_t) \| \pi_\theta(\cdot|s_t) \right) \right]
+L^{\text{KL-Penalty}}(\theta) 
+= \hat{\mathbb{E}}_t \Biggl[ \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)} \,\hat{A}_t 
+\;-\; \beta \cdot \mathrm{KL}\bigl(\,\pi_{\theta_{\text{old}}}(\cdot \mid s_t)\;\big\|\;\pi_\theta(\cdot \mid s_t)\bigr) \Biggr]
 $$
 
 
@@ -546,8 +547,10 @@ PO minimizes the squared difference between:
 by this equation 
 
 $$
-L^{\text{VF}}_t(\theta) = \left( V_\theta(s_t) - V_t^{\text{target}} \right)^2
+L^{\text{VF}}_t(\theta) 
+= \Bigl(V_\theta(s_t) \;-\; V_t^{\text{target}}\Bigr)^2
 $$
+
 
 This is just mean squared error (MSE), and it tells the critic how much error the critic esmitate was off on this state
 
