@@ -538,7 +538,7 @@ This target value tells the critic what the true total reward from state $s_t$ w
 Value Function Loss Formula
 
 To train the critic or to make the value predictions accurate
-PO minimizes the squared difference between:
+PPO minimizes the squared difference between:
 
 - The predicted value $V_{\theta}(s_t)$
 - The actual return $V_t^{\text{target}}$
