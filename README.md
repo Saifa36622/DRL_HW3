@@ -280,7 +280,7 @@ This algorithm directly optimize the policy or policy base $𝜋(𝑎∣𝑠; �
 
 Update parameter $𝜃$ in the direction that makes good actions increaseing and also similar to Monte Carlo by Wait until the episode ends then Calculate Return $G_t$ Then update
 
-when it policy base it mean there is no value function (Q or V) .Instead of Deterministic Policy that forced randomness from ε like linear q learn or DQN that use ε-greedy to selected the random action this algorithm are using Stochastic Policy that mean the agent will choose probability distribution over actions and we acn achive that by apply Softmax function at the output layer of the Neural Network
+when it policy base it mean there is no value function (Q or V) .Instead of Deterministic Policy that forced randomness from ε like linear q learn or DQN that use ε-greedy to selected the random action this algorithm are using **Stochastic Policy** that mean the agent will choose probability distribution over actions and we acn achive that by apply Softmax function at the output layer of the Neural Network
 
 **Softmax function**
 
