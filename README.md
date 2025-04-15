@@ -442,9 +442,7 @@ $ or ratio between new and old policies, and the y-axis shows the clipped object
 
  Another approach, which can be used as an **alternative** to the clipped surrogate objective, or in addition to it 
 
- $$
-L^{KL}(\theta) = \mathbb{E}_t \left[ \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)} \cdot A_t - \beta \cdot D_{KL} \left[ \pi_{\theta_{\text{old}}}(\cdot|s_t) \| \pi_\theta(\cdot|s_t) \right] \right]
-$$
+ $$L^{KL}(\theta) = \mathbb{E}_t \left[ \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)} \cdot A_t - \beta \cdot D_{KL} \left[ \pi_{\theta_{\text{old}}}(\cdot|s_t) \| \pi_\theta(\cdot|s_t) \right] \right]$$
 
 Where:
 
