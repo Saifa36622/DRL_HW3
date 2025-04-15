@@ -496,8 +496,7 @@ More accurate but high variance and needs to wait until episode ends.
 
 - GAE (Generalized Advantage Estimation)
 
-$$\hat{A}_t = \sum_{l=0}^{T - t - 1} (\gamma \lambda)^l \delta_{t+l}
-$$
+$$\hat{A}_t = \sum_{l=0}^{T - t - 1} (\gamma \lambda)^l \delta_{t+l}$$
 
 when 
 
@@ -544,7 +543,7 @@ PO minimizes the squared difference between:
 
 by this equation 
 
-$$L^{\text{VF}}_t(\theta) = \left( V_\theta(s_t) - V_t^{\text{target}} \right)^2$$
+$$ L^{\text{VF}}_t(\theta) = \left( V_\theta(s_t) - V_t^{\text{target}} \right)^2 $$
 
 This is just mean squared error (MSE), and it tells the critic how much error the critic esmitate was off on this state
 
