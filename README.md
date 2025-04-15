@@ -203,7 +203,7 @@ the target of loss function is to **Minimize Loss**	to improve model accuracy an
 
 
 
-3. Target Net
+3. **Target Net**
 
 Target Network is a separate neural network in the Deep Q-Network (DQN) algorithm that is used to provide a stable and consistent target value **aka $𝑄_{max}$ when calculating the loss** for training the Evaluation Network (Eval Net).
 
