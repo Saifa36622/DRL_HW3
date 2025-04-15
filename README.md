@@ -543,7 +543,8 @@ PO minimizes the squared difference between:
 
 by this equation 
 
-$$L^{\text{VF}}_t(\theta) = \left(V_\theta(s_t) - V_t^{\text{target}}\right)^2$$
+![equation](https://latex.codecogs.com/png.latex?L%5E%7B%5Ctext%7BVF%7D%7D_t%28%5Ctheta%29%20%3D%20%28V_%5Ctheta%28s_t%29%20-%20V_t%5E%7B%5Ctext%7Btarget%7D%7D%29%5E2)
+
 
 
 This is just mean squared error (MSE), and it tells the critic how much error the critic esmitate was off on this state
