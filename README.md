@@ -496,7 +496,7 @@ More accurate but high variance and needs to wait until episode ends.
 
 - GAE (Generalized Advantage Estimation)
 
-$$\hat{A}_t = \sum_{l=0}^{T - t - 1} (\gamma \lambda)^l \delta_{t+l}$$
+$$A_t = \sum_{l=0}^{T - t - 1} (\gamma \lambda)^l \delta_{t+l}$$
 
 when 
 
