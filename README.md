@@ -614,7 +614,7 @@ then we write the PPO from this suedo code
   (Figure (3) from Schulman et al., "Proximal Policy Optimization Algorithms")
 </p>
 
-as 
+the we can write the flow as
 
 <p align="center">
   <img src="image/image17.png" alt="alt text">
