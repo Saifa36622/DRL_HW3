@@ -442,7 +442,9 @@ such as the example pic
  Another approach, which can be used as an **alternative** to the clipped surrogate objective, or in addition to it 
 
 
-$$L^{\text{KL-Penalty}}(\theta) = \hat{\mathbb{E}}_t \left[ \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)} \hat{A}_t - \beta \cdot \mathrm{KL}\left(\pi_{\theta_{\text{old}}}(\cdot \mid s_t)\;\|\;\pi_\theta(\cdot \mid s_t)\right) \right]$$
+<p align="center">
+  <img src="https://latex.codecogs.com/png.latex?L%5E%7B%5Ctext%7BKL-Penalty%7D%7D%28%5Ctheta%29%20%3D%20%5Chat%7B%5Cmathbb%7BE%7D%7D_t%20%5Cleft%5B%20%5Cfrac%7B%5Cpi_%5Ctheta%28a_t%20%5Cmid%20s_t%29%7D%7B%5Cpi_%7B%5Ctheta_%7B%5Ctext%7Bold%7D%7D%7D%28a_t%20%5Cmid%20s_t%29%7D%20%5Chat%7BA%7D_t%20-%20%5Cbeta%20%5Ccdot%20%5Cmathrm%7BKL%7D%28%5Cpi_%7B%5Ctheta_%7B%5Ctext%7Bold%7D%7D%7D%28%5Ccdot%20%5Cmid%20s_t%29%5C%3B%5C%7C%5C%3B%5Cpi_%5Ctheta%28%5Ccdot%20%5Cmid%20s_t%29%29%20%5Cright%5D" alt="KL-Penalty Loss">
+</p>
 
 
 
@@ -543,7 +545,9 @@ PO minimizes the squared difference between:
 
 by this equation 
 
-![equation](https://latex.codecogs.com/png.latex?L%5E%7B%5Ctext%7BVF%7D%7D_t%28%5Ctheta%29%20%3D%20%28V_%5Ctheta%28s_t%29%20-%20V_t%5E%7B%5Ctext%7Btarget%7D%7D%29%5E2)
+<p align="center">
+  <img src="https://latex.codecogs.com/png.latex?L%5E%7B%5Ctext%7BVF%7D%7D_t%28%5Ctheta%29%20%3D%20%28V_%5Ctheta%28s_t%29%20-%20V_t%5E%7B%5Ctext%7Btarget%7D%7D%29%5E2" alt="Value Function Loss">
+</p>
 
 
 
@@ -565,7 +569,10 @@ $\pi_\theta(a|s)$ = probability of action $𝑎$  at state $𝑠$
 
 then we can write it as in Entropy Bonus Loss added in PPO 
 
-$$L^{\text{entropy}}_t(\theta) = c_2 \cdot S_\pi$$
+
+<p align="center">
+  <img src="https://latex.codecogs.com/png.latex?L%5E%7B%5Ctext%7Bentropy%7D%7D_t%28%5Ctheta%29%20%3D%20c_2%20%5Ccdot%20S_%5Cpi" alt="Entropy Loss">
+</p>
 
 
 
