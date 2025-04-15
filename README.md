@@ -551,7 +551,7 @@ by this equation
 
 
 
-This is just mean squared error (MSE), and it tells the critic how much error the critic esmitate was off on this state
+The output will be mean squared error (MSE), and it tells the critic how much error the critic esmitate was off on this state
 
 5. Entropy Bonus
 
