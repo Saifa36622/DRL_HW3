@@ -475,7 +475,7 @@ when :
 
 $Q^π (s,a)$ = The expected return after taking action $𝑎$ in state $𝑠$  and following policy $𝜋$ 
 
-$V^π(s)$ = he expected return from state $𝑠$ following policy $𝜋$
+$V^π(s)$ = Expected Return from $𝑠$ without specific action
 
 from the equation it will indicate that If I take action $𝑎$ now, is it better than my average action at state $𝑠$ or not ? ,So the advantage functions help reduce the variance in policy gradient updates, leading to more stable and efficient learning.
 
