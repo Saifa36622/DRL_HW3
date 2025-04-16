@@ -25,6 +25,7 @@
 **/outputs/*
 **/videos/*
 **/wandb/*
+**/Stabilize/*
 **/.neptune/*
 docker/artifacts/
 *.tmp

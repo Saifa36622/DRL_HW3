@@ -104,16 +104,16 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     # hyperparameters
     num_of_action = 7
-    action_range = [-15, 15]  
+    action_range = [-12.0, 12.0]  
 
-    learning_rate = 0.3
+    learning_rate = 1e-4
 
-    hidden_dim = 64
-    n_episodes = 10000
+    hidden_dim = 128
+    n_episodes = 15000
     initial_epsilon = 1.0
     epsilon_decay = 0.9997  
     final_epsilon = 0.01
-    discount = 0.5
+    discount = 0.99
 
     buffer_size = 10000
     batch_size = 64
@@ -137,42 +137,50 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     task_name = str(args_cli.task).split('-')[0]  # Stabilize, SwingUp
 
+    # Algorithm_name = "DQN"
+
     Algorithm_name = "DQN"
 
-    agent = DQN(
-        device=device,
-        num_of_action=num_of_action,
-        action_range=action_range,
-        learning_rate=learning_rate,
-        hidden_dim=hidden_dim,
-        initial_epsilon = initial_epsilon,
-        epsilon_decay = epsilon_decay,
-        final_epsilon = final_epsilon,
-        discount_factor = discount,
-        buffer_size = buffer_size,
-        batch_size = batch_size,
-    )
+    if Algorithm_name == "DQN" :
 
-    # agent = Linear_QN(
-    #     # device=device,
-    #     num_of_action=num_of_action,
-    #     action_range=action_range,
-    #     learning_rate=learning_rate,
-    #     # hidden_dim=hidden_dim,
-    #     initial_epsilon = initial_epsilon,
-    #     epsilon_decay = epsilon_decay,
-    #     final_epsilon = final_epsilon,
-    #     discount_factor = discount,
-    #     # buffer_size = buffer_size,
-    #     # batch_size = batch_size,
-    # )
-    max_steps = 1000
+        agent = DQN(
+            device=device,
+            num_of_action=num_of_action,
+            action_range=action_range,
+            learning_rate=learning_rate,
+            hidden_dim=hidden_dim,
+            initial_epsilon = initial_epsilon,
+            epsilon_decay = epsilon_decay,
+            final_epsilon = final_epsilon,
+            discount_factor = discount,
+            buffer_size = buffer_size,
+            batch_size = batch_size,
+        )
+
+    if Algorithm_name == "Linear_QN" :
+
+        agent = Linear_QN(
+            # device=device,
+            num_of_action=num_of_action,
+            action_range=action_range,
+            learning_rate=learning_rate,
+            # hidden_dim=hidden_dim,
+            initial_epsilon = initial_epsilon,
+            epsilon_decay = epsilon_decay,
+            final_epsilon = final_epsilon,
+            discount_factor = discount,
+            # buffer_size = buffer_size,
+            # batch_size = batch_size,
+
+        )
+        max_steps = 1000
+
     # reset environment
     obs, _ = env.reset()
     timestep = 0
 
     train_logs = []
-    name_plot = "testing"
+    name_plot = "Normal_DQN_test"
 
     full_path = os.path.join(f"{task_name}", Algorithm_name,name_plot)
     os.makedirs(full_path, exist_ok=True)
@@ -193,7 +201,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     with open(config_path, 'w') as f:
         json.dump(config, f, indent=4)  # FIX: Use indentation for readability
 
-    # wandb.init(project="Test_HW_3",name=name_plot)
+    wandb.init(project="Test_HW_3",name=name_plot)
 
     # simulate environment
     while simulation_app.is_running():
@@ -203,24 +211,39 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         for episode in tqdm(range(n_episodes)):
 
             # DQN
-            agent.learn(env)
+            if Algorithm_name == "DQN" :
+                agent.learn(env)
+                agent.decay_epsilon()
+                # print(agent.epsilon)
 
             # LQN
-            # agent.learn(env,max_steps)
+            if Algorithm_name == "Linear_QN" :
+                agent.learn(env,max_steps)
+                agent.sum_count += agent.count
 
-        if episode % 100 == 0:
-            print(agent.epsilon)
+            if episode % 100 == 0:
+                print(agent.epsilon)
 
-            # wandb.log({
-            #     "episode": episode,
-            #     # "cumulative_reward": cumulative_reward,
-            #     "epsilon": agent.epsilon
-            # })
+                wandb.log({
+                    "episode": episode,
+                    # "cumulative_reward": cumulative_reward,
+                    "count" : agent.sum_count / 10000,
+                    "reward" : agent.reward_sum / 100,
+                    "epsilon": agent.epsilon
+                })
+                agent.sum_count = 0
+                agent.reward_sum = 0
 
-            # Save Q-Learning agent
-            w_file = f"{Algorithm_name}_{episode}_{num_of_action}_{action_range[1]}.json"
-            # full_path = os.path.join(f"w/{task_name}", Algorithm_name)
-            agent.save_w(full_path, w_file)
+                # Save Q-Learning agent
+                w_file = f"{Algorithm_name}_{episode}_{num_of_action}_{action_range[1]}.json"
+                # full_path = os.path.join(f"w/{task_name}", Algorithm_name)
+
+                if Algorithm_name == "DQN" :
+                    agent.save_w_DQN(full_path, w_file)
+
+                    
+                if Algorithm_name == "Linear_QN" :
+                    agent.save_w(full_path, w_file)
         
         print('Complete')
         # agent.plot_durations(show_result=True)
@@ -238,7 +261,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     # close the simulator
     env.close()
-    # wandb.finish()
+    wandb.finish()
 
 if __name__ == "__main__":
     # run the main function

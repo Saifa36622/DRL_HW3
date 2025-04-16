@@ -1,7 +1,9 @@
 from __future__ import annotations
 import numpy as np
 from RL_Algorithm.RL_base_function import BaseAlgorithm
-
+import os
+import json
+import torch
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -11,6 +13,7 @@ import random
 import matplotlib
 import matplotlib.pyplot as plt
 from IPython import display
+import wandb
 
 class DQN_network(nn.Module):
     """
@@ -98,7 +101,6 @@ class DQN(BaseAlgorithm):
         # Experiment with different values and configurations to see how they affect the training process.
         # Remember to document any changes you make and analyze their impact on the agent's performance.
 
-        pass
         # ====================================== #
 
         super(DQN, self).__init__(
@@ -139,10 +141,9 @@ class DQN(BaseAlgorithm):
             return random.randrange(self.num_of_action)
         else:
             # Greedy action from policy_net
-            with torch.no_grad():
+             with torch.no_grad():
                 q_values = self.policy_net(state)  # shape: [1, num_actions]
-                # Return the index of the largest Q-value
-                return q_values.argmax(dim=1).item()
+                return q_values[0].argmax().item()  
             
         # ====================================== #
 
@@ -154,35 +155,59 @@ class DQN(BaseAlgorithm):
             non_final_mask (Tensor): Mask indicating which states are non-final.
             non_final_next_states (Tensor): The next states that are not terminal.
             state_batch (Tensor): Batch of current states.
-            action_batch (Tensor): Batch of actions taken.
-            reward_batch (Tensor): Batch of received rewards.
-        
+            action_batch (Tensor): Batch of actions taken (expected shape: [batch_size, 1]).
+            reward_batch (Tensor): Batch of received rewards (expected shape: [batch_size, 1]).
+
         Returns:
-            Tensor: Computed loss.
+            Tensor: Computed MSE loss.
         """
-        # ========= put your code here ========= #
-        non_final_next_states = non_final_next_states.to(self.device)
-        state_batch = state_batch.to(self.device)
-        action_batch = action_batch.to(self.device)
+        # Move all tensors to device
+        state_batch = state_batch.to(self.device).squeeze(1)
+        non_final_next_states = non_final_next_states.to(self.device).squeeze(1)
+        action_batch = action_batch.to(self.device).squeeze(-1).unsqueeze(1)
         reward_batch = reward_batch.to(self.device)
 
-        # 1) Q(s, a) from policy_net
-        # shape of policy_net(state_batch) is [batch_size, num_actions]
-        # action_batch is shape [batch_size, 1], so we use gather to pick Q(s, a_i)
-        state_action_values = self.policy_net(state_batch).gather(1, action_batch)
+        # 🛠️ Ensure action_batch shape: [batch_size, 1] and dtype: int64
+        # action_batch = action_batch.view(-1, 1).long()
 
-        # 2) Q(s', a') from target_net (for next states)
+        # # 🧯 Safety checks
+        # assert action_batch.max() < self.num_of_action, f"[ERROR] action index too large: {action_batch.max().item()} >= {self.num_of_action}"
+        # assert action_batch.min() >= 0, f"[ERROR] negative action index: {action_batch.min().item()}"
+
+        if action_batch.ndim == 3:
+            action_batch = action_batch.squeeze(-1)  # from [B, 1, 1] to [B, 1]
+        if action_batch.ndim == 1:
+            action_batch = action_batch.unsqueeze(1)  # from [B] to [B, 1]
+
+        action_batch = action_batch.long()
+
+        # 1️⃣ Get predicted Q(s, a) from policy_net
+        q_values = self.policy_net(state_batch)  # [B, num_actions]
+
+        # FIX ACTION SHAPE: squeeze to [B, 1]
+        action_batch = action_batch.squeeze(-1)
+
+        # Sanity checks
+        assert q_values.dim() == 2, f"q_values shape: {q_values.shape}"
+        assert action_batch.dim() == 2 or action_batch.dim() == 1, f"action_batch shape: {action_batch.shape}"
+
+        if action_batch.dim() == 1:
+            action_batch = action_batch.unsqueeze(1)  # [B] → [B, 1]
+
+        state_action_values = q_values.gather(1, action_batch)  # Shape: [batch_size, 1]
+
+        # 2️⃣ Get max Q(s', a') from target_net (for next states)
         next_state_values = torch.zeros(self.batch_size, device=self.device)
         with torch.no_grad():
-            # max over next actions: shape [non_final_batch_size]
             max_next_q = self.target_net(non_final_next_states).max(dim=1)[0]
             next_state_values[non_final_mask] = max_next_q
-        
-        # 3) Compute target: r + gamma * max Q(s',a')
-        expected_state_action_values = reward_batch + (self.discount_factor * next_state_values.unsqueeze(1))
 
-        # 4) MSE loss
+        # 3️⃣ Compute expected Q value: r + γ * max Q(s', a')
+        expected_state_action_values = reward_batch + self.discount_factor * next_state_values.unsqueeze(1)
+
+        # 4️⃣ MSE Loss
         loss = F.mse_loss(state_action_values, expected_state_action_values)
+
         return loss
         # ====================================== #
 
@@ -341,52 +366,54 @@ class DQN(BaseAlgorithm):
         #         break
         
         # ---------------------------------------------------------------------------------------------------------------
-        state, _info = env.reset()
-        state = torch.as_tensor(state["policy"], dtype=torch.float32, device=self.device)  # clean convert
-
+        state, _ = env.reset()
+        state = torch.as_tensor(state["policy"], dtype=torch.float32, device=self.device)
+        reward = 0
         episode_return = 0.0
         done = False
         timestep = 0
 
         while not done:
-            # 1. Select Action
+            # 1. Select action
             action_idx = self.select_action(state)
-
-            # convert to Tensor (Isaac wants Tensor, even for discrete action)
             action_tensor = torch.tensor([[action_idx]], dtype=torch.float32, device=self.device)
 
-            # 2. Step env
-            next_obs, reward, terminated, truncated, info = env.step(action_tensor)
-
+            # 2. Step environment
+            next_obs, reward, terminated, truncated, _ = env.step(action_tensor)
             done = terminated or truncated
             next_state = torch.as_tensor(next_obs["policy"], dtype=torch.float32, device=self.device)
 
+            # 3. Prepare tensors
             reward_tensor = torch.tensor([reward], dtype=torch.float32, device=self.device)
-            action_tensor_long = torch.tensor([[action_idx]], dtype=torch.int64, device=self.device)  # for loss.gather()
-
+            action_tensor_long = torch.tensor([[action_idx]], dtype=torch.int64, device=self.device)
             done_tensor = torch.tensor([1.0 if done else 0.0], dtype=torch.float32, device=self.device)
 
-            # 3. Save to Replay Buffer
+            # 4. Store in replay buffer
             self.memory.add(
-                state.unsqueeze(0),           # [1, state_dim]
-                action_tensor_long,           # [1, 1]
-                reward_tensor.unsqueeze(0),   # [1, 1]
-                next_state.unsqueeze(0),      # [1, state_dim]
-                done_tensor                   # [1]
+                state.unsqueeze(0),
+                action_tensor_long,
+                reward_tensor.unsqueeze(0),
+                next_state.unsqueeze(0),
+                done_tensor
             )
 
-            # 4. Move on
+            # 5. Learn and update target net
+            loss_val = self.update_policy()
+            # self.update_policy()
+            
+            self.update_target_networks()
+
+            # Move to next state
+            wandb.log({"loss function": loss_val})
             state = next_state
             episode_return += reward
             timestep += 1
 
-            # 5. Update Policy and Target Network
-            self.update_policy()
-            self.update_target_networks()
-
-            if done:
-                self.plot_durations(timestep)
-                break
+        self.sum_count += timestep
+        self.reward_sum += episode_return
+            # if done:
+                # self.plot_durations(timestep)
+                # break
 
 
 
@@ -421,3 +448,14 @@ class DQN(BaseAlgorithm):
             else:
                 display.display(plt.gcf())
     # ================================================================================== #
+
+    def save_w_DQN(self, path, filename):
+        """
+        Save weight parameters.
+        """
+        # ========= put your code here ========= #
+        
+        self.w = self.policy_net.fc_out.weight.detach().cpu().numpy()
+        w_list = self.w.tolist()
+        with open(os.path.join(path, filename), 'w') as f:
+            json.dump(w_list, f)

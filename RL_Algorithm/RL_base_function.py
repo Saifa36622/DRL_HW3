@@ -107,13 +107,19 @@ class BaseAlgorithm():
         discount_factor: float = 0.95,
         buffer_size: int = 1000,
         batch_size: int = 1,
-    ):
+        count : int = 0,
+        sum_count : int = 0,
+        reward_sum : float = 0,
+        ):
+
         self.lr = learning_rate
         self.discount_factor = discount_factor
         self.epsilon = initial_epsilon
         self.epsilon_decay = epsilon_decay
         self.final_epsilon = final_epsilon
-
+        self.count = 0
+        self.sum_count = 0 
+        self.reward_sum = 0.0
         self.num_of_action = num_of_action
         self.action_range = action_range  # [action_min, action_max]
 
@@ -187,7 +193,8 @@ class BaseAlgorithm():
         Save weight parameters.
         """
         # ========= put your code here ========= #
-
+        
+        # self.w = self.policy_net.fc_out.weight.detach().cpu().numpy()
         w_list = self.w.tolist()
         with open(os.path.join(path, filename), 'w') as f:
             json.dump(w_list, f)
