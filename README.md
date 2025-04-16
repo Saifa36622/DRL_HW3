@@ -4,7 +4,7 @@
 
 ### Linear Q learning
 
-Linear Q-Learning is a type of Q-Learning where instead of using a table to store the Q-values, we use a linear function (a weighted sum of features) to approximate the Q-values
+Linear Q-Learning is a type of Q-Learning where instead of using a table to store the Q-values, we use a linear function (a weighted sum of features) to approximate the Q-values (still **value-based** like q learning -> it mean still use epsilon greedy as policy)
 
 So instead of keeping the q table like this 
 
@@ -119,7 +119,7 @@ then the rest of the algorithm is the same with q-learning by using the selected
 
 Similar to linear q learning but instead of using linear function to approax the q value ,this algorithm use of deep neural networks to approximate value and Q-functions.
 
-In deep Q-learning, Q-functions are represented using deep neural networks. Instead of selecting features and training weights, we learn the parameters $\theta$ to a neural network. The Q-function is $Q(s,a;\theta)$
+In deep Q-learning, Q-functions are represented using deep neural networks. Instead of selecting features and training weights, we learn the parameters $\theta$ to a neural network. The Q-function is $Q(s,a;\theta)$ (still **value-based** like q learning -> it mean still use epsilon greedy as policy)
 
 
 
@@ -276,7 +276,7 @@ $$θ←θ−α∇_θ ​ L(θ)$$
 
 ### MC reinforce (Monte Carlo Policy Gradient Algorithm)
 
-This algorithm directly optimize the policy or policy base $𝜋(𝑎∣𝑠; 𝜃)$, by increasing the probability of actions that lead to high rewards.
+This algorithm directly optimize the policy or **policy base** $𝜋(𝑎∣𝑠; 𝜃)$, by increasing the probability of actions that lead to high rewards.
 
 Update parameter $𝜃$ in the direction that makes good actions increaseing and also similar to Monte Carlo by Wait until the episode ends then Calculate Return $G_t$ Then update
 

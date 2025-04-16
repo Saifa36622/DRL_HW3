@@ -193,7 +193,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     with open(config_path, 'w') as f:
         json.dump(config, f, indent=4)  # FIX: Use indentation for readability
 
-    wandb.init(project="Test_HW_3",name=name_plot)
+    # wandb.init(project="Test_HW_3",name=name_plot)
 
     # simulate environment
     while simulation_app.is_running():
@@ -211,11 +211,11 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         if episode % 100 == 0:
             print(agent.epsilon)
 
-            wandb.log({
-                "episode": episode,
-                # "cumulative_reward": cumulative_reward,
-                "epsilon": agent.epsilon
-            })
+            # wandb.log({
+            #     "episode": episode,
+            #     # "cumulative_reward": cumulative_reward,
+            #     "epsilon": agent.epsilon
+            # })
 
             # Save Q-Learning agent
             w_file = f"{Algorithm_name}_{episode}_{num_of_action}_{action_range[1]}.json"
@@ -238,7 +238,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     # close the simulator
     env.close()
-    wandb.finish()
+    # wandb.finish()
 
 if __name__ == "__main__":
     # run the main function

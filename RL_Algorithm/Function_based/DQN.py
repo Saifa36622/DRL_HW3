@@ -10,6 +10,7 @@ from collections import namedtuple, deque
 import random
 import matplotlib
 import matplotlib.pyplot as plt
+from IPython import display
 
 class DQN_network(nn.Module):
     """
