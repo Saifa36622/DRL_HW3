@@ -642,3 +642,16 @@ Entropy is then calculated to encourage exploration and prevent premature conver
 Using the advantage estimates and clip ratio, the loss function is formed (including the clipped surrogate loss, entropy bonus, and value function loss). The final step is applying gradient descent to minimize the total loss and update the actor network's parameters $θ$
 
 Then loop it all agian
+
+### Conclusion
+
+So we can conclude that 
+
+## 🧠 Reinforcement Learning Algorithm Comparison
+
+| Algorithm       | Approach        | Policy Type   | Observation Space | Action Space   | Exploration vs. Exploitation Strategy |
+|----------------|------------------|---------------|-------------------|----------------|----------------------------------------|
+| **Linear Q**   | Value-Based      | Deterministic | Discrete          | Discrete       | Epsilon-greedy: starts with high exploration (`ε=1.0`), decays over time. |
+| **DQN**        | Value-Based      | Deterministic | Continuous        | Discrete       | Epsilon-greedy + Replay Buffer: balances by decaying ε and learning from diverse past experiences. |
+| **MC REINFORCE** | Policy-Based     | Stochastic    | Continuous        | Discrete       | Inherent stochasticity + policy gradient encourages exploration; learns from full episodes. |
+| **PPO**        | Actor-Critic     | Stochastic    | Continuous        | Continuous     | Uses clipped objective to prevent overly large policy updates; stochastic policy ensures ongoing exploration. |
