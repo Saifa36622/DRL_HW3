@@ -619,7 +619,7 @@ then we write the PPO from this suedo code
 the we can write the flow as
 
 <p align="center">
-  <img src="image/PPO5.png" alt="alt text">
+  <img src="image/PPO6.png" alt="alt text">
 </p>
 
 The process begins with initialization of the actor and critic networks. An initial state $s_0$ is sampled from the environment, and the actor network (parameterized by $θ$) selects an action $a_t$ based on the current policy $π_θ$. The selected action is then executed in the environment, which provides feedback
