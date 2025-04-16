@@ -652,4 +652,4 @@ So we can conclude that
 | **Linear Q**   | Value-Based      | Deterministic | Discrete          | Discrete       | Epsilon-greedy: starts with high exploration (`ε=1.0`), decays over time. |
 | **DQN**        | Value-Based      | Deterministic | Continuous        | Discrete       | Epsilon-greedy + Replay Buffer: balances by decaying ε and learning from diverse past experiences. |
 | **MC REINFORCE** | Policy-Based     | Stochastic    | Continuous        | Discrete       | Inherent stochasticity + policy gradient encourages exploration; learns from full episodes. |
-| **PPO**        | Actor-Critic     | Stochastic    | Continuous        | Continuous     | Uses clipped objective to prevent overly large policy updates; stochastic policy ensures ongoing exploration. |
+| **PPO**        | Actor-Critic     | Stochastic    | Continuous        | Continuous / Discrete    | Uses clipped objective to prevent overly large policy updates; stochastic policy ensures ongoing exploration. |
