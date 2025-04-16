@@ -647,8 +647,6 @@ Then loop it all agian
 
 So we can conclude that 
 
-## 🧠 Reinforcement Learning Algorithm Comparison
-
 | Algorithm       | Approach        | Policy Type   | Observation Space | Action Space   | Exploration vs. Exploitation Strategy |
 |----------------|------------------|---------------|-------------------|----------------|----------------------------------------|
 | **Linear Q**   | Value-Based      | Deterministic | Discrete          | Discrete       | Epsilon-greedy: starts with high exploration (`ε=1.0`), decays over time. |
