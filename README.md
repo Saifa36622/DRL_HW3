@@ -400,6 +400,8 @@ The clipped surrogate objective function improves training stability by limiting
 
 During training, the agent tunes the parameter values in $θ$.
 
+(Both actor and critic are Nueral network model)
+
 **PPO key method**
 
 1. Clipped Surrogate
