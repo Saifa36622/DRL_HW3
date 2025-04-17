@@ -372,6 +372,7 @@ class DQN(BaseAlgorithm):
         episode_return = 0.0
         done = False
         timestep = 0
+        loss_val = 0.0
 
         while not done:
             # 1. Select action
@@ -398,17 +399,23 @@ class DQN(BaseAlgorithm):
             )
 
             # 5. Learn and update target net
-            loss_val = self.update_policy()
+
+            loss = self.update_policy()
+            if loss is not None:
+                loss_val += float(loss)
             # self.update_policy()
             
             self.update_target_networks()
 
             # Move to next state
-            wandb.log({"loss function": loss_val})
+        
             state = next_state
             episode_return += reward
             timestep += 1
 
+        
+        wandb.log({"loss function": loss_val})
+        
         self.sum_count += timestep
         self.reward_sum += episode_return
             # if done:
@@ -455,7 +462,21 @@ class DQN(BaseAlgorithm):
         """
         # ========= put your code here ========= #
         
-        self.w = self.policy_net.fc_out.weight.detach().cpu().numpy()
-        w_list = self.w.tolist()
-        with open(os.path.join(path, filename), 'w') as f:
-            json.dump(w_list, f)
+        torch.save(self.policy_net.state_dict(), path)
+        # with open(os.path.join(path, filename), 'w') as f:
+        #     json.dump(w_list, f)
+
+    def load_w_DQN(self, path, filename):
+        """
+        Load the entire policy network model (state_dict).
+        
+        Args:
+            path (str): Directory where the model is saved.
+            filename (str): Name of the saved model file.
+        """
+        file_path = os.path.join(path, filename)
+        self.policy_net.load_state_dict(torch.load(file_path, map_location=self.device))
+        self.policy_net.to(self.device)
+        self.policy_net.eval()  # Optional: switch to eval mode if you're done training
+        print(f"Model loaded from {file_path}")
+    

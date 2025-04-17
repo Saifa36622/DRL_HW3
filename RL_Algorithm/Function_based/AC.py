@@ -6,7 +6,9 @@ import torch.optim as optim
 import numpy as np
 from torch.distributions.normal import Normal
 from torch.nn.functional import mse_loss
-from RL_Algorithm.RL_base_function import BaseAlgorithm
+from RL_Algorithm.RL_base_function import BaseAlgorithm2
+import wandb
+import os
 
 class Actor(nn.Module):
     def __init__(self, input_dim, hidden_dim, output_dim, learning_rate=1e-4):
@@ -21,9 +23,17 @@ class Actor(nn.Module):
         """
         super(Actor, self).__init__()
 
-        # ========= put your code here ========= #
-        pass
-        # ====================================== #
+        # Network architecture
+        self.net = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
+        )
+        self.mu = nn.Linear(hidden_dim, output_dim)  # Mean of the action distribution
+        self.log_std = nn.Parameter(torch.zeros(output_dim))  # Log standard deviation
+        self.init_weights()
+        self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
 
     def init_weights(self):
         """
@@ -42,16 +52,18 @@ class Actor(nn.Module):
             state (Tensor): Current state of the environment.
 
         Returns:
-            Tensor: Selected action values.
+            Normal: Distribution of actions.
         """
-        # ========= put your code here ========= #
-        pass
-        # ====================================== #
+        x = self.net(state)
+        mu = self.mu(x)
+        std = self.log_std.exp()
+        dist = Normal(mu, std)
+        return dist
 
 class Critic(nn.Module):
     def __init__(self, state_dim, action_dim, hidden_dim, learning_rate=1e-4):
         """
-        Critic network for Q-value approximation.
+        Critic network for state value approximation.
 
         Args:
             state_dim (int): Dimension of the state space.
@@ -61,9 +73,15 @@ class Critic(nn.Module):
         """
         super(Critic, self).__init__()
 
-        # ========= put your code here ========= #
-        pass
-        # ====================================== #
+        self.net = nn.Sequential(
+            nn.Linear(state_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, 1)  # Output a single value
+        )
+        self.init_weights()
+        self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
 
     def init_weights(self):
         """
@@ -74,25 +92,22 @@ class Critic(nn.Module):
                 nn.init.kaiming_uniform_(m.weight, nonlinearity='relu')  # Kaiming initialization
                 nn.init.zeros_(m.bias)  # Initialize bias to 0
 
-    def forward(self, state, action):
+    def forward(self, state):
         """
-        Forward pass for Q-value estimation.
+        Forward pass for value estimation.
 
         Args:
             state (Tensor): Current state of the environment.
-            action (Tensor): Action taken by the agent.
 
         Returns:
-            Tensor: Estimated Q-value.
+            Tensor: Estimated state value.
         """
-        # ========= put your code here ========= #
-        pass
-        # ====================================== #
+        return self.net(state).squeeze(-1)
 
-class Actor_Critic(BaseAlgorithm):
+class Actor_Critic(BaseAlgorithm2):
     def __init__(self, 
                 device = None, 
-                num_of_action: int = 2,
+                num_of_action: int = 1,  # Changed from 2 to 1 to match environment
                 action_range: list = [-2.5, 2.5],
                 n_observations: int = 4,
                 hidden_dim = 256,
@@ -108,7 +123,7 @@ class Actor_Critic(BaseAlgorithm):
 
         Args:
             device (str): Device to run the model on ('cpu' or 'cuda').
-            num_of_action (int, optional): Number of possible actions. Defaults to 2.
+            num_of_action (int, optional): Number of possible actions. Defaults to 1.
             action_range (list, optional): Range of action values. Defaults to [-2.5, 2.5].
             n_observations (int, optional): Number of observations in state. Defaults to 4.
             hidden_dim (int, optional): Hidden layer dimension. Defaults to 256.
@@ -118,25 +133,21 @@ class Actor_Critic(BaseAlgorithm):
             batch_size (int, optional): Size of training batches. Defaults to 1.
             buffer_size (int, optional): Replay buffer size. Defaults to 256.
         """
-        # Feel free to add or modify any of the initialized variables above.
-        # ========= put your code here ========= #
         self.device = device
         self.actor = Actor(n_observations, hidden_dim, num_of_action, learning_rate).to(device)
         self.actor_target = Actor(n_observations, hidden_dim, num_of_action, learning_rate).to(device)
         self.critic = Critic(n_observations, num_of_action, hidden_dim, learning_rate).to(device)
         self.critic_target = Critic(n_observations, num_of_action, hidden_dim, learning_rate).to(device)
-
+        self.count = 0
+        self.sum_count = 0
+        self.reward_sum = 0
         self.batch_size = batch_size
         self.tau = tau
         self.discount_factor = discount_factor
+        self.clip_param = 0.2  # PPO clipping parameter
 
-        self.update_target_networks(tau=1)  # initialize target networks
-
-        # Experiment with different values and configurations to see how they affect the training process.
-        # Remember to document any changes you make and analyze their impact on the agent's performance.
-
-        pass
-        # ====================================== #
+        # Initialize target networks with source network parameters
+        self.update_target_networks(tau=1)
 
         super(Actor_Critic, self).__init__(
             num_of_action=num_of_action,
@@ -157,86 +168,78 @@ class Actor_Critic(BaseAlgorithm):
 
         Returns:
             Tuple[Tensor, Tensor]: 
-                - scaled_action: The final action after scaling.
-                - clipped_action: The action before scaling but after noise adjustment.
+                - action: The selected action.
+                - log_prob: Log probability of the selected action.
         """
-        # ========= put your code here ========= #
-        pass
-        # ====================================== #
+        state = state.to(self.device)
+        dist = self.actor(state)
+        action = dist.sample()
+        
+        # Clamp action to allowed range
+        action = torch.clamp(action, self.action_range[0], self.action_range[1])
+        
+        # Calculate log probability of the action
+        log_prob = dist.log_prob(action).sum(-1)
+        
+        return action.detach(), log_prob.detach()
     
     def generate_sample(self, batch_size):
         """
         Generates a batch sample from memory for training.
 
         Returns:
-            Tuple: A tuple containing:
-                - state_batch (Tensor): The batch of current states.
-                - action_batch (Tensor): The batch of actions taken.
-                - reward_batch (Tensor): The batch of rewards received.
-                - next_state_batch (Tensor): The batch of next states received.
-                - done_batch (Tensor): The batch of dones received.
+            Tuple: A tuple containing state, action, reward, next_state, done batches.
         """
-        # Ensure there are enough samples in memory before proceeding
-        # ========= put your code here ========= #
-        # Sample a batch from memory
+        if len(self.memory) < batch_size:
+            return None
+
         batch = self.memory.sample()
-        # ====================================== #
-        
-        # Sample a batch from memory
-        # ========= put your code here ========= #
-        pass
-        # ====================================== #
+        state, action, reward, next_state, done, log_prob = batch
+        return state, action, reward, next_state, done, log_prob
+    
+    def calculate_loss(self, states, actions, rewards, next_states, dones, old_log_probs):
+        with torch.no_grad():
+            values = self.critic(states)
+            next_values = self.critic(next_states)
+            returns = rewards + self.discount_factor * next_values * (1 - dones)
+            advantages = returns - values
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
-    def calculate_loss(self, states, actions, rewards, next_states, dones):
-        """
-        Computes the loss for policy optimization.
+        dist = self.actor(states)
+        new_log_probs = dist.log_prob(actions).sum(-1)
+        ratio = torch.exp(new_log_probs - old_log_probs)
 
-        Args:
-            - states (Tensor): The batch of current states.
-            - actions (Tensor): The batch of actions taken.
-            - rewards (Tensor): The batch of rewards received.
-            - next_states (Tensor): The batch of next states received.
-            - dones (Tensor): The batch of dones received.
+        surr1 = ratio * advantages
+        surr2 = torch.clamp(ratio, 1 - self.clip_param, 1 + self.clip_param) * advantages
+        actor_loss = -torch.min(surr1, surr2).mean()
 
-        Returns:
-            Tensor: Computed critic & actor loss.
-        """
-        # ========= put your code here ========= #
-        # Update Critic
+        values = self.critic(states)
+        critic_loss = mse_loss(values, returns)
 
-        # Gradient clipping for critic
-
-        # Update Actor
-
-        # Gradient clipping for actor
-
-        pass
-        # ====================================== #
+        return actor_loss, critic_loss
 
     def update_policy(self):
-        """
-        Update the policy using the calculated loss.
-
-        Returns:
-            float: Loss value after the update.
-        """
-        # ========= put your code here ========= #
         sample = self.generate_sample(self.batch_size)
         if sample is None:
             return
-        states, actions, rewards, next_states, dones = sample
 
-        # Normalize rewards (optional but often helpful)
+        states, actions, rewards, next_states, dones, old_log_probs = sample
         rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-7)
 
-        # Compute critic and actor loss
-        critic_loss, actor_loss = self.calculate_loss(states, actions, rewards, next_states, dones)
-        
-        # Backpropagate and update critic network parameters
+        actor_loss, critic_loss = self.calculate_loss(states, actions, rewards, next_states, dones, old_log_probs)
 
-        # Backpropagate and update actor network parameters
-        # ====================================== #
+        wandb.log({
+            "PPO Actor loss function": actor_loss.item(),
+            "PPO Critic loss function": critic_loss.item()
+        })
 
+        self.critic.optimizer.zero_grad()
+        critic_loss.backward()
+        self.critic.optimizer.step()
+
+        self.actor.optimizer.zero_grad()
+        actor_loss.backward()
+        self.actor.optimizer.step()
 
     def update_target_networks(self, tau=None):
         """
@@ -245,59 +248,114 @@ class Actor_Critic(BaseAlgorithm):
         Args:
             tau (float, optional): Update rate. Defaults to self.tau.
         """
-        # ========= put your code here ========= #
-        pass
-        # ====================================== #
+        if tau is None:
+            tau = self.tau
+
+        for target_param, param in zip(self.actor_target.parameters(), self.actor.parameters()):
+            target_param.data.copy_(tau * param.data + (1.0 - tau) * target_param.data)
+
+        for target_param, param in zip(self.critic_target.parameters(), self.critic.parameters()):
+            target_param.data.copy_(tau * param.data + (1.0 - tau) * target_param.data)
 
     def learn(self, env, max_steps, num_agents, noise_scale=0.1, noise_decay=0.99):
         """
-        Train the agent on a single step.
-
+        Learning loop for the agent.
+        
         Args:
-            env: The environment in which the agent interacts.
-            max_steps (int): Maximum number of steps per episode.
-            num_agents (int): Number of agents in the environment.
-            noise_scale (float, optional): Initial exploration noise level. Defaults to 0.1.
-            noise_decay (float, optional): Factor by which noise decreases per step. Defaults to 0.99.
+            env: The environment to interact with
+            max_steps: Maximum number of steps per episode
+            num_agents: Number of agents in the environment
+            noise_scale: Initial noise scale for exploration
+            noise_decay: Decay rate for exploration noise
+            
+        Returns:
+            float: Episode return (cumulative reward)
         """
-
-        # ===== Initialize trajectory collection variables ===== #
-        # Reset environment to get initial state (tensor)
-        # Track total episode return (float)
-        # Flag to indicate episode termination (boolean)
-        # Step counter (int)
-        # ========= put your code here ========= #
-        pass
-        # ====================================== #
+        state, _ = env.reset()
+        
+        # Handle state properly - ensure it's on the right device
+        if isinstance(state["policy"], torch.Tensor):
+            state = state["policy"].to(self.device)
+        else:
+            state = torch.tensor(state["policy"], dtype=torch.float32, device=self.device)
+            
+        episode_return = 0
+        done = False
+        self.count = 0
+        log_probs = []
 
         for step in range(max_steps):
-            # Predict action from the policy network
-            # ========= put your code here ========= #
-            pass
-            # ====================================== #
-
-            # Execute action in the environment and observe next state and reward
-            # ========= put your code here ========= #
-            pass
-            # ====================================== #
-
-            # Store the transition in memory
-            # ========= put your code here ========= #
-            # Parallel Agents Training
-            if num_agents > 1:
-                pass
-            # Single Agent Training
+            # Select action and get log prob
+            action, log_prob = self.select_action(state, noise=noise_scale)
+            
+            # Fix the action shape for the environment
+            # The environment is expecting a 2D tensor with shape [batch_size, action_dim]
+            # So we reshape to [1, 1] for a single action
+            action_env = action.detach().reshape(1, -1)[:, :1]
+            
+            # Step environment with the properly shaped tensor
+            next_obs, reward, terminated, truncated, _ = env.step(action_env)
+            
+            done = terminated or truncated
+            
+            # Handle next_state the same way as state
+            if isinstance(next_obs["policy"], torch.Tensor):
+                next_state = next_obs["policy"].to(self.device)
             else:
-                pass
-            # ====================================== #
+                next_state = torch.tensor(next_obs["policy"], dtype=torch.float32, device=self.device)
 
-            # Update state
+            # Convert reward and done to tensors
+            reward_tensor = torch.tensor([reward], dtype=torch.float32, device=self.device)
+            done_tensor = torch.tensor([float(done)], dtype=torch.float32, device=self.device)
 
-            # Decay the noise to gradually shift from exploration to exploitation
+            # Store transition in memory
+            self.memory.add(
+            state.unsqueeze(0),
+            action.unsqueeze(0),
+            reward_tensor.unsqueeze(0),
+            next_state.unsqueeze(0),
+            done_tensor.unsqueeze(0),
+            log_prob.unsqueeze(0)
+            )
+            log_probs.append(log_prob)
 
+            state = next_state
+            episode_return += reward
 
-            # Perform one step of the optimization (on the policy network)
-            self.update_policy()
+            # Decrease exploration noise over time
+            noise_scale *= noise_decay
+            self.count += 1
+            
+            if done:
+                break
 
-            # Update target networks
-            self.update_target_networks()
+        # Store log_probs for PPO update
+        self.old_log_probs = torch.stack(log_probs).detach()
+        self.sum_count += self.count
+
+        # Update policy and target networks
+        self.update_policy()
+        self.update_target_networks()
+        self.reward_sum += episode_return
+
+        return episode_return
+    
+    def save_model(self, path, filename):
+        os.makedirs(path, exist_ok=True)
+        checkpoint = {
+            'actor_state_dict': self.actor.state_dict(),
+            'critic_state_dict': self.critic.state_dict(),
+            'actor_optimizer_state_dict': self.actor.optimizer.state_dict(),
+            'critic_optimizer_state_dict': self.critic.optimizer.state_dict(),
+            # Include any additional information you want to save
+        }
+        torch.save(checkpoint, os.path.join(path, filename))
+        print(f"Model saved to {os.path.join(path, filename)}")
+
+    def load_model(self, path, filename):
+        checkpoint = torch.load(os.path.join(path, filename), map_location=self.device)
+        self.actor.load_state_dict(checkpoint['actor_state_dict'])
+        self.critic.load_state_dict(checkpoint['critic_state_dict'])
+        self.actor.optimizer.load_state_dict(checkpoint['actor_optimizer_state_dict'])
+        self.critic.optimizer.load_state_dict(checkpoint['critic_optimizer_state_dict'])
+        print(f"Model loaded from {os.path.join(path, filename)}")
