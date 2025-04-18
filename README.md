@@ -879,6 +879,45 @@ from the example picture there is 1 more data incldue that are
 - PPO with more batch size are more stable and effective than the Normal one.Larger batch sizes seem to stabilize the learning process, reduce variance, and help the agent escape premature convergence or instability **but**  PPO with more batch still likely fell into a local optimum or suffered from exploding gradients due to poor hyperparameters or poor nueral network setup 
 
 
-### Compare all the algorithm
-
 ### Conclusion
+
+compare all the algorithm 
+
+<p align="center">
+  <img src="image/image25.png" alt="alt text">
+</p>
+
+and to answer following question 
+
+Which algorithm performs best? 
+and 
+Why does it perform better than the others? 
+
+refference from only in this project we can conclude that 
+
+- PPO
+
+  - Shows a very steep improvement early on, reaching a count above 6 within just a few thousand episodes.This indicates it learns quickly how to balance the pole effectively.
+  - Performance are not stable but remains consistently high, suggesting stable learning with room for optimization
+
+- DQN 
+  - Learns more slowly and steadily over time.Eventually statturate around count = 2, much lower than PPO.Indicates decent learning, but less efficient and stable than PPO
+
+- MC reinforce
+  - Shows almost no improvement throughout training.Learning stagnates early, likely due to high variance in return estimates or poor hyperparameter/NN design
+
+- Linear q learing 
+
+  - Performs the worst overall, staying flat near count = 0.5. due to the models that lack the performance to capturing CartPole’s dynamics
+
+So I can say that 
+
+Which algorithm performs best -> **PPO**
+
+and why ? 
+
+1. **Policy Gradient + Clipping**: PPO uses policy gradients with clipping, allowing for more stable updates without drastically changing the policy
+
+2. **Actor-Critic base**: Benefits from separate policy (actor) and value (critic) networks, reducing variance and improving learning
+
+3. **Better handling of continuous env**: PPO can naturally optimize within a continuous action space
