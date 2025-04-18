@@ -1,6 +1,6 @@
 # **Cartpole**
 
-## **Review algorithm**
+## **Part 1 : Review algorithm**
 
 ### Linear Q learning
 
@@ -653,3 +653,125 @@ So we can conclude that
 | **DQN**        | Value-Based      | Deterministic | Continuous        | Discrete       | Epsilon-greedy + Replay Buffer: balances by decaying ε and learning from diverse past experiences. |
 | **MC REINFORCE** | Policy-Based     | Stochastic    | Continuous        | Discrete       | Inherent stochasticity + policy gradient encourages exploration; learns from full episodes. |
 | **PPO**        | Actor-Critic     | Stochastic    | Continuous        | Continuous / Discrete    | Uses clipped objective to prevent overly large policy updates; stochastic policy ensures ongoing exploration. |
+
+
+## Part 4: Evaluate Cart-Pole Agent performance
+
+To evaluted we will propose the base performance result of each hyperparameter fine tune and result of the fine tune of each parameter 
+
+### Linear Q-learning
+
+with this set of parameter ,similar to q learning
+
+"num_of_action": 7,
+    "action_range": [
+        -12.0,
+        12.0
+    ],
+    "learning_rate": 0.0003,
+    "epsilon_decay": 0.9997,
+    "discount": 0.99,
+
+The result of the train are 
+
+
+<p align="center">
+  <img src="image/image18.png" alt="alt text">
+</p>
+
+or can be show in the video as 
+
+
+
+and if we plot the moveement will be shown as 
+
+
+
+#### Key take aways 
+
+even thought how many find tune the parameter the result of linear q learn are not that good that can be cuase from 
+- Linear q learning use **linear function** to predict the $Q(s, a)$ or assume that value functions change linearly with state variables but cartpole task are **non-linear** motion dynamics .So, the linear model will be struggles to capture the actual complexity of the environment’s transitions and reward structure.
+
+
+### DQN (Deep q learnig)
+
+with this set of parameter
+
+  "num_of_action": 7,
+  "action_range": [
+      -12.0,
+      12.0
+  ],
+  "hidden_dim": 128,
+  "learning_rate": 0.0003,
+  "epsilon_decay": 0.9997,
+  "discount": 0.99,
+  "buffer size": 10000,
+  "batch size": 64,
+
+The result is as follow 
+
+
+<p align="center">
+  <img src="image/image19.png" alt="alt text">
+</p>
+
+and the loss function over time 
+
+<p align="center">
+  <img src="image/image20.png" alt="alt text">
+</p>
+
+
+or can be show in the video as 
+
+
+
+and if we plot the moveement will be shown as 
+
+
+
+and if we fin tune some parameter the result can be as follow 
+
+<p align="center">
+  <img src="image/image21.png" alt="alt text">
+</p>
+
+from the example picture there is 2 more data incldue that are 
+
+- DQN with increase epsilon decay rate from 0.9997 -> 0.9998 (increase the value to slow down the decay rate)
+
+- DQN wih less hidden_dim 
+
+
+#### Key take away 
+
+##### Normal DQN 
+
+- agent learned a reasonably good policy, as shown by increased rewards and task count over time.
+However, the training is not fully stable, and the spiky loss during exploitation that may need Better target network update frequency or soft updates or smaller learning rate to stabilize updates.
+
+- for the loss function the General Trend show according to the teory that loss will be decreases over time, especially in the early phase from explore phase to expliot phase indicate that **The DQN is learning to better predict the Q-values** and The TD-error (Temporal Difference error) is being minimized as expected 
+
+&emsp; &emsp;   but around the exploit phase there are some sharp spikes in the loss (according to theory there should be less loss or trending low)
+that may cuase from too much **Replay Buffer** .If replay buffer contains a wide range of past experiences, the agent may sample rare transitions that are from older policies and that morre likely to cause unexpected Q-value updates or we can use smaller learning rate to stabilize updates **but** The loss stays below 0.05 most of the time in the exploit phase which suggests convergence is still happening with some noise .So the performance it not that bad 
+
+##### DQN fine tune 
+
+
+- DQN_increase_epsilon
+
+  - agent uses a slower epsilon decay, allowing for longer exploration phase but Learns more conservatively in the beginning and  catches up over time
+
+  - Achieves competitive performance later in training but with higher variance in reward and episode length
+
+- DQN_less_hidden
+
+  - Performs the worst in both reward and episode count that cause by using fewer hidden units, resulting in limited model capacity
+
+  - Indicates that model expressiveness is critical for learning good policies, even in relatively simple tasks.
+
+In conclusion Model capacity ( number of hidden units) is essential for learning an effective Q-function and exploration rate (epsilon decay rate) are greatly impacts the learning phase and stability.
+
+### MC reinforce
+

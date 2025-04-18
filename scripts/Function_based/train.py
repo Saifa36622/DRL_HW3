@@ -108,19 +108,23 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     learning_rate = 3e-4
 
-    hidden_dim = 128
+    # hidden_dim = 128
+
+    # MC
+    hidden_dim =256
+
     n_episodes = 25000
     initial_epsilon = 1.0
-    epsilon_decay = 0.9998  
+    epsilon_decay = 0.9997  
     final_epsilon = 0.01
     discount = 0.99
 
     buffer_size = 10000
-    batch_size = 64
+    batch_size = 256
 
     # MC
     n_observations = 4
-    dropout = 0.5
+    dropout = 0.3
 
     # AC
     tau = 0.005
@@ -145,8 +149,8 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     # Algorithm_name = "DQN"
 
-    Algorithm_name = "AC"
-    name_plot = "wowzaa"
+    Algorithm_name = "Linear_QN"
+    name_plot = "LQ_Normal"
 
     if Algorithm_name == "DQN" :
 
@@ -249,7 +253,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     with open(config_path, 'w') as f:
         json.dump(config, f, indent=4)  # FIX: Use indentation for readability
 
-    wandb.init(project="Test_HW_3",name=name_plot)
+    wandb.init(project="HW3_Final",name=name_plot)
     sum_loss = 0
     sum_ep = 0
     # simulate environment
@@ -280,20 +284,13 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
                 episode_return = agent.learn(env,1000,1)
                 sum_ep += episode_return
                 
-                
-
-
-                
-
 
             if episode % 100 == 0:
                 print(agent.epsilon)
 
 
                 if Algorithm_name == "MC" :
-
-                    wandb.log({"loss function": sum_loss})
-                    sum_loss = 0
+                    
                     # wandb_table = wandb.Table(columns=["state", "action", "reward", "next_state", "done"])
                     # for state, action, reward, next_state, done in trajectory:
                     #     wandb_table.add_data(
@@ -312,8 +309,10 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
                         # "cumulative_reward": cumulative_reward,
                         "count" : timestep_MC / 100,
                         "reward" : sum_ep / 100,
-                        "epsilon": agent.epsilon
+                        "epsilon": agent.epsilon,
+                        "loss function": sum_loss
                     })
+                    sum_loss = 0
                     sum_ep = 0
 
                 else :
@@ -333,7 +332,10 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
                 # full_path = os.path.join(f"w/{task_name}", Algorithm_name)
 
                 if Algorithm_name == "DQN" :
-                    agent.save_w_DQN(full_path, w_file)
+
+                    w_file = f"{Algorithm_name}_{episode}_{num_of_action}_{action_range[1]}.pth"
+                    full_path_DQN = f"{full_path}" +"/" + w_file
+                    agent.save_w_DQN(full_path_DQN, w_file)
 
                     
                 if Algorithm_name == "Linear_QN" :
