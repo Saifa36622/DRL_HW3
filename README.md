@@ -878,8 +878,10 @@ from the example picture there is 1 more data incldue that are
 
 - PPO with more batch size are more stable and effective than the Normal one.Larger batch sizes seem to stabilize the learning process, reduce variance, and help the agent escape premature convergence or instability **but**  PPO with more batch still likely fell into a local optimum or suffered from exploding gradients due to poor hyperparameters or poor nueral network setup 
 
-![ab05197e-67ce-4cf4-be4d-17a0ae5afb0d](https://github.com/user-attachments/assets/bb6f8ae5-6f1a-4fd5-b8b8-483b3bd74a02)
-![2985d532-f386-474b-ae77-60bd7d65b042](https://github.com/user-attachments/assets/8c6c0df1-42db-4ef0-a7ab-67cf0d5559d1)
+###### Example of local optima
+![ab05197e-67ce-4cf4-be4d-17a0ae5afb0d](https://github.com/user-attachments/assets/1c606e91-c1b2-464c-b265-edde1f6c6dd7)
+
+local optima refer to suboptimal policies where the agent achieves a relatively good reward compared to nearby policy variations but fails to discover better strategies that yield higher long-term rewards. This typically occurs in complex environments where the reward landscape is highly non-convex, causing algorithms like policy gradients to converge prematurely to a locally optimal solution. Overcoming local optima is essential for effective learning and is addressed through techniques such as exploration strategies (e.g., entropy regularization, epsilon-greedy), stochastic policy updates, and advanced algorithms like Proximal Policy Optimization (PPO) that promote stable yet exploratory learning.
 
 
 ### Conclusion
