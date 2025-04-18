@@ -684,8 +684,7 @@ https://github.com/user-attachments/assets/36ae6196-1519-4766-a3ec-bdce4674fe86
 
 
 and if we plot the moveement will be shown as 
-
-
+![LQN](https://github.com/user-attachments/assets/fe63e83a-3526-4aa9-9242-66b5e68a812e)
 
 #### Key take aways 
 
@@ -728,7 +727,7 @@ https://github.com/user-attachments/assets/79ab6960-8351-488e-b955-809390f93078
 
 
 and if we plot the moveement will be shown as 
-
+![DQN](https://github.com/user-attachments/assets/ce6e2cde-cb7a-462d-b12c-c947a018f829)
 
 
 and if we fin tune some parameter the result can be as follow 
@@ -796,9 +795,9 @@ with this set of parameter
 or can be show in the video as 
 https://github.com/user-attachments/assets/730b4c60-4d32-4395-b87a-0996748647c8
 
-
-
 and if we plot the moveement will be shown as 
+![MC](https://github.com/user-attachments/assets/f5bf41e2-11b9-496b-bcc6-f2c479ac00eb)
+
 
 #### Key take aways 
 
@@ -848,6 +847,7 @@ https://github.com/user-attachments/assets/8714a145-5c58-483a-b7a7-cda97565ba78
 
 
 and if we plot the moveement will be shown as 
+![PPO](https://github.com/user-attachments/assets/c4c2a326-285b-4817-9544-00548a542361)
 
 
 
