@@ -880,6 +880,7 @@ from the example picture there is 1 more data incldue that are
 
 ##### Example of local optima
 ![ab05197e-67ce-4cf4-be4d-17a0ae5afb0d](https://github.com/user-attachments/assets/1c606e91-c1b2-464c-b265-edde1f6c6dd7)
+
   In Deep Reinforcement Learning (DRL), local optima means the agent finds a way to get some reward, but it’s not the best way possible. The agent gets stuck doing okay actions and doesn’t explore better ones because it thinks it’s already doing well. This often happens when the environment is complicated, and the learning algorithm (like policy gradient) stops improving too early. To fix this, we use tricks like exploration (trying random actions sometimes), adding randomness to learning (like entropy), or smarter methods like PPO that help the agent keep exploring while learning stably. The goal is to help the agent not settle too early and find the best long-term strategy.
 
 ### Conclusion
