@@ -878,6 +878,9 @@ from the example picture there is 1 more data incldue that are
 
 - PPO with more batch size are more stable and effective than the Normal one.Larger batch sizes seem to stabilize the learning process, reduce variance, and help the agent escape premature convergence or instability **but**  PPO with more batch still likely fell into a local optimum or suffered from exploding gradients due to poor hyperparameters or poor nueral network setup 
 
+![ab05197e-67ce-4cf4-be4d-17a0ae5afb0d](https://github.com/user-attachments/assets/bb6f8ae5-6f1a-4fd5-b8b8-483b3bd74a02)
+![2985d532-f386-474b-ae77-60bd7d65b042](https://github.com/user-attachments/assets/8c6c0df1-42db-4ef0-a7ab-67cf0d5559d1)
+
 
 ### Conclusion
 
