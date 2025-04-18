@@ -378,7 +378,18 @@ def main():
     weight_file = f"{Algorithm_name}_{model_episode}_{num_of_action}_{action_range[1]}.pth"
     model_path = os.path.join(f"{task_name}", Algorithm_name, name_plot, weight_file)
 
-    agent.load_w_DQN(model_path)
+    if Algorithm_name == "DQN" :
+        agent.load_w_DQN(model_path)
+
+    if Algorithm_name == "MC" :
+        agent.load_model(model_path)
+
+    if Algorithm_name == "AC" :
+        agent.load_model(model_path)
+
+    if Algorithm_name == "Linear_QN" :
+        agent.load_w(model_path)
+
 
     # reset environment
     obs, _ = env.reset()
