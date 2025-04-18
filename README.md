@@ -680,7 +680,7 @@ The result of the train are
 </p>
 
 or can be show in the video as 
-
+https://github.com/user-attachments/assets/36ae6196-1519-4766-a3ec-bdce4674fe86
 
 
 and if we plot the moveement will be shown as 
@@ -724,7 +724,7 @@ and the loss function over time
 
 
 or can be show in the video as 
-
+https://github.com/user-attachments/assets/79ab6960-8351-488e-b955-809390f93078
 
 
 and if we plot the moveement will be shown as 
@@ -794,6 +794,7 @@ with this set of parameter
 </p>
 
 or can be show in the video as 
+https://github.com/user-attachments/assets/730b4c60-4d32-4395-b87a-0996748647c8
 
 
 
@@ -842,6 +843,7 @@ and the result as follow
 </p>
 
 or can be show in the video as 
+https://github.com/user-attachments/assets/8714a145-5c58-483a-b7a7-cda97565ba78
 
 
 
