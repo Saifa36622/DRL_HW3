@@ -775,3 +775,110 @@ In conclusion Model capacity ( number of hidden units) is essential for learning
 
 ### MC reinforce
 
+with this set of parameter
+
+"num_of_action": 7,
+"action_range": [
+    -12.0,
+    12.0
+],
+"hidden_dim": 256,
+"learning_rate": 0.0003,
+"discount": 0.99,
+"drop_out": 0.3,
+"n_obs": 4
+
+
+<p align="center">
+  <img src="image/image22.png" alt="alt text">
+</p>
+
+or can be show in the video as 
+
+
+
+and if we plot the moveement will be shown as 
+
+#### Key take aways 
+
+-  Unstable learning. Both reward and count remain low and unstable show that the agent does not consistently improve.
+- Loss function is highly volatile, indicating unstable policy updates
+
+- the result may cuase from 
+
+1. Poor Neural network setup 
+
+REINFORCE is a high-variance algorithm, and without stabilizers like baselines or critics, it relies heavily on the neural network to approximate the policy well .A weak or poorly structured network will not be able to Represent complex policies effectively and Generalize from noisy, sparse rewards and the cuase of the poor Neural network setup have a lot such as 
+- Too small hidden layer 
+- Poor activation functions ( such as using no non-linearity or only shallow layers causes underfitting ) , 
+- learning rate mismatches if too high it can causes exploding gradients and if too low the agent can be stuck and have no learning.
+
+
+
+
+
+### PPO
+
+with this set of parameter
+
+"num_of_action": 7,
+"action_range": [
+    -12.0,
+    12.0
+],
+"hidden_dim": 128,
+"learning_rate": 0.0003,
+"epsilon_decay": 0.9998,
+"discount": 0.99,
+"buffer size": 10000,
+"batch size": 64 and clipping policy = 0.2
+
+
+
+and the result as follow 
+
+<p align="center">
+  <img src="image/image23.png" alt="alt text">
+</p>
+
+or can be show in the video as 
+
+
+
+and if we plot the moveement will be shown as 
+
+
+
+and if we fin tune some parameter the result can be as follow 
+
+<p align="center">
+  <img src="image/image24.png" alt="alt text">
+</p>
+
+
+from the example picture there is 1 more data incldue that are 
+
+- PPO with more batch size (from 64 to 128)
+
+
+#### Key take aways 
+
+
+##### Normal PPO 
+
+
+- the agent shows initial learning success, followed by sudden divergence in both actor and critic losses around episode 9k, leading to a collapse in performance that may from **local optimum** -> The local optimum is when The agent learns a behavior that consistently gives a moderate reward then it stops exploring and becomes overconfident in this behavior 
+
+- Another thing that incidcate the local optimum problem is from the trajectory in the video that indicate that the agent is trying to balance the pole but did not seem to care about the cart position that cause the agernt to run out of bound and be terminate (might indicate to the problem in reward term)
+
+- another problem is **Network architecture limitations and Hyperparameter sensitivity** .A shallow or poorly initialized neural network might not be expressive enough to model the complex reward landscape, trapping the agent in simple policies and also an inappropriate learning rate or clip range can cause gradients to overshoot, leading to policy collapse and locking the agent into bad strategies
+ - from the **loss function of Critic** .we can see that on the initially loss are low and stable during early training but Around step ~10,000, there's a huge spike in loss, reaching values over 7000, then it collapses back down that might cause from value function exploded, possibly due to poor mini-batch sampling (very different next states or rewards) or instability in TD error or temporal difference targets. and that cuase the reward term and the count term to have significantly worse performance
+
+##### PPO fine tune 
+
+- PPO with more batch size are more stable and effective than the Normal one.Larger batch sizes seem to stabilize the learning process, reduce variance, and help the agent escape premature convergence or instability **but**  PPO with more batch still likely fell into a local optimum or suffered from exploding gradients due to poor hyperparameters or poor nueral network setup 
+
+
+### Compare all the algorithm
+
+### Conclusion

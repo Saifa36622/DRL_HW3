@@ -111,7 +111,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     # hidden_dim = 128
 
     # MC
-    hidden_dim =256
+    hidden_dim =128
 
     n_episodes = 25000
     initial_epsilon = 1.0
@@ -120,7 +120,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     discount = 0.99
 
     buffer_size = 10000
-    batch_size = 256
+    batch_size = 64
 
     # MC
     n_observations = 4
